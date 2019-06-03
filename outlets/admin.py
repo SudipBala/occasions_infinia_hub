@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 from outlets.models import Outlet
-from outlets.models_stocks import Category, SubCategory, Item, Flavour, Size
+from outlets.stock_models import Category, SubCategory, Item, Flavour, Size
 
 
 # admin.site.register(Stock)
