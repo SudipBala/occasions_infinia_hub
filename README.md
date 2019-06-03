@@ -1,2 +1,2 @@
-# occasions
-a webapp in django framework
+# Occasions
+A webapp in django framework
