@@ -102,8 +102,8 @@ ENV/
 .ropeproject
 
 # Binary Files
-.jpg
-.png
+*.jpg
+*.png
 
 # Database file
 db.sqlite3
@@ -114,7 +114,5 @@ db.sqlite3
 # keyring lib
 keyring/
 
-# randoms
-gen_choices.py
-categories.txt
+migrations/
 
