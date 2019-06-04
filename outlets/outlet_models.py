@@ -9,6 +9,8 @@ from libs.constants import CURRENCY_CHOICES, area_choices, COUNTRY_CHOICES
 from multiselectfield import MultiSelectField
 
 from libs.db_func import OUTLET_IMAGE_PATH, update_file_path
+from libs.fields import SizeRestrictedThumbnailerField
+from libs.models import CustomModel
 
 
 def outlet_image_path(instance, filename):
@@ -17,14 +19,8 @@ def outlet_image_path(instance, filename):
                                                                      filename.split('.')[-1]))
 
 
-def outlet_cover_image_path(instance, filename):
-    return update_file_path(OUTLET_IMAGE_PATH + '{0}/cover_{1}.{2}'.format(instance.display_name,
-                                                                           instance.city,
-                                                                           filename.split('.')[-1]))
-
-
 # Create your models here.
-class Outlet(models.Model):
+class Outlet(CustomModel):
     date_created = models.DateField(_("Created Date"), default=timezone.now, null=True, blank=True)
 
     display_name = models.CharField("Outlet Name", max_length=100, blank=False)
@@ -76,6 +72,13 @@ class Outlet(models.Model):
 
     license = models.FileField(_("Outlet Registration License"), upload_to="license", null=True, blank=True,
                                max_length=500)
+
+    image = SizeRestrictedThumbnailerField(_("Outlet Logo"), upload_to=outlet_image_path,
+                                           max_upload_size=10485760, resize_source=dict(size=(300, 0),
+                                                                                        sharpen=True,
+                                                                                        replace_alpha="#fff"
+                                                                                        ),
+                                           max_length=500)
 
     def __str__(self):
         return "%s (%s,%s)" % (self.display_name, self.city, self.country)
