@@ -1,10 +1,5 @@
-from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models
-from lib.validators import PHONE_REGEX
-from django.core.validators import EmailValidator
-from lib.constants import ADDRESS_CHOICES,COUNTRY_CHOICES,ORDER_STATUS
-from outlets.models import Outlet
-from multiselectfield import MultiSelectField
+from outlets.outlet_models import Outlet
 
 
 class Category(models.Model):
