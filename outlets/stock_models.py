@@ -10,55 +10,66 @@ from multiselectfield import MultiSelectField
 class Category(models.Model):
     class Meta:
         verbose_name_plural = "Category"
-    category_name = models.CharField("Category", max_length=50, blank=False)
+
+    name = models.CharField("Category", max_length=50, blank=False)
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE, related_name='children')
+    # flavour = models.CharField("Flavour", max_length=50, blank=False)
+    # size = models.CharField("Size", max_length=50, blank=False)
 
     def __str__(self):
-        return self.category_name
+        #return self.name
+        full_path = [self.name]
+        k = self.parent
 
+        while k is not None:
+            full_path.append(k.name)
+            k = k.parent
 
-class Flavour(models.Model):
-    class Meta:
-        verbose_name_plural = "Flavour"
-    flavour = models.CharField("Flavour", max_length=50, blank=False)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="flavors", related_query_name="flavors")
+        return ' -> '.join(full_path[::-1])
 
-    def __str__(self):
-        return self.flavour
+#
+# class Flavour(models.Model):
+#     class Meta:
+#         verbose_name_plural = "Flavour"
+#     flavour = models.CharField("Flavour", max_length=50, blank=False)
+#     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="flavors")
+#
+#     def __str__(self):
+#         return self.flavour
+#
+#
+# class Size(models.Model):
+#     class Meta:
+#         verbose_name_plural = "Size"
+#     size = models.CharField("Size", max_length=50, blank=False)
+#     category = models.ForeignKey(Category, on_delete=models.CASCADE)
+#
+#     def __str__(self):
+#         return self.size
+#
 
-
-class Size(models.Model):
-    class Meta:
-        verbose_name_plural = "Size"
-    size = models.CharField("Size", max_length=50, blank=False)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.size
-
-
-class SubCategory(models.Model):
-    class Meta:
-        verbose_name_plural = "Sub-Category"
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    sub_category = models.CharField("Sub Category", max_length=100)
-
-    def __str__(self):
-        return self.sub_category
+# class SubCategory(models.Model):
+#     class Meta:
+#         verbose_name_plural = "Sub-Category"
+#     category = models.ForeignKey(Category, on_delete=models.CASCADE)
+#     sub_category = models.CharField("Sub Category", max_length=100)
+#
+#     def __str__(self):
+#         return self.sub_category
 
 
 class Item(models.Model):
     class Meta:
         verbose_name_plural = "Item"
+
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     outlets = models.ManyToManyField(Outlet)
-    sub_category = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
-    name = models.CharField("Item", max_length=100, blank=False)
-    flavour = models.ForeignKey(Flavour, on_delete=models.CASCADE)
-    size = models.ForeignKey(Size, on_delete=models.CASCADE)
-    uom = models.CharField("UOM", max_length=50, blank=False)
-    image = models.ImageField("Image")
+    name = models.CharField("Item", max_length=100)
+    uom = models.CharField("UOM", max_length=50)
+    image = models.ImageField("Image", blank=True,null= True)
     price = models.DecimalField("Price", decimal_places=2, max_digits=10)
     description = models.TextField("Description", max_length=500)
-    quantity = models.FloatField("Quantity", max_length=25, blank=False)
+    quantity = models.FloatField("Quantity", max_length=25)
     created_date = models.DateTimeField("Created Date")
 
     def __str__(self):
