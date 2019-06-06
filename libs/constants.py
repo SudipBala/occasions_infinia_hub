@@ -1,7 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 
-__author__ = 'pravesh'
 
 ORDER_STATUS = (
     (0, "Pending"),

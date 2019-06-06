@@ -1,6 +1,6 @@
 from django.forms import ModelForm
 
-from outlets.models import Outlet
+from outlets.outlet_models import Outlet
 
 
 class OutletForm(ModelForm):

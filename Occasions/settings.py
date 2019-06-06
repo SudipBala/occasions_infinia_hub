@@ -30,16 +30,26 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-INSTALLED_APPS = [
+CORE_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'multiselectfield',
-    'outlets',
 ]
+
+THIRD_PARTY_APPS = [
+    'multiselectfield',
+    'django_extensions',
+    'easy_thumbnails',
+]
+
+LOCAL_APPS = [
+    'outlets'
+]
+
+INSTALLED_APPS = CORE_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 
 MIDDLEWARE = [
@@ -125,3 +135,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o0777
+FILE_UPLOAD_PERMISSIONS = 0o0644
+
+STATICFILES_DIRS = []
+
+SHELL_PLUS = "ipython"
