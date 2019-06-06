@@ -1,56 +1,7 @@
 from django.db import models
+
+from outlets.category_models import Category
 from outlets.outlet_models import Outlet
-
-
-class Category(models.Model):
-    class Meta:
-        verbose_name_plural = "Category"
-
-    name = models.CharField("Category", max_length=50, blank=False)
-    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE, related_name='children')
-    # flavour = models.CharField("Flavour", max_length=50, blank=False)
-    # size = models.CharField("Size", max_length=50, blank=False)
-
-    def __str__(self):
-        #return self.name
-        full_path = [self.name]
-        k = self.parent
-
-        while k is not None:
-            full_path.append(k.name)
-            k = k.parent
-
-        return ' -> '.join(full_path[::-1])
-
-#
-# class Flavour(models.Model):
-#     class Meta:
-#         verbose_name_plural = "Flavour"
-#     flavour = models.CharField("Flavour", max_length=50, blank=False)
-#     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="flavors")
-#
-#     def __str__(self):
-#         return self.flavour
-#
-#
-# class Size(models.Model):
-#     class Meta:
-#         verbose_name_plural = "Size"
-#     size = models.CharField("Size", max_length=50, blank=False)
-#     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-#
-#     def __str__(self):
-#         return self.size
-#
-
-# class SubCategory(models.Model):
-#     class Meta:
-#         verbose_name_plural = "Sub-Category"
-#     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-#     sub_category = models.CharField("Sub Category", max_length=100)
-#
-#     def __str__(self):
-#         return self.sub_category
 
 
 class Item(models.Model):
