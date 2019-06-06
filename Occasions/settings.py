@@ -44,6 +44,7 @@ THIRD_PARTY_APPS = [
     'django_extensions',
     'easy_thumbnails',
 ]
+
 LOCAL_APPS = [
     'outlets'
 ]
@@ -143,3 +144,5 @@ FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o0777
 FILE_UPLOAD_PERMISSIONS = 0o0644
 
 STATICFILES_DIRS = []
+
+SHELL_PLUS = "ipython"
