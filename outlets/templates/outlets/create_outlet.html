@@ -10,5 +10,9 @@
 <input type="submit" value="Save">
 </form>
 
+{% for a in outlets %}
+    {{ a.display_name }}
+    {{ a.description }}
+{% endfor %}
 </body>
 </html>
