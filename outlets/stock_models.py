@@ -15,8 +15,8 @@ from outlets.signals import create_thumbnail
 
 def item_image_path(instance, filename):
     return update_file_path(
-        STOCK_IMAGE_PATH + '{0}/item_{1}.{2}'.format(
-            getattr(getattr(instance, 'group', {}), 'id', "public"), instance.display_name, filename.split('.')[-1]))
+        STOCK_IMAGE_PATH + 'item_{0}.{1}'.format(
+          instance.display_name, filename.split('.')[-1]))
 
 
 class BaseItem(CustomModel):
@@ -62,10 +62,10 @@ class BaseItem(CustomModel):
 
 
 class OutletItem(BaseItem):
-    type1 = models.ForeignKey(Category, verbose_name=_("Category"), related_name="second", on_delete=models.CASCADE)
-    type2 = models.ForeignKey(Category, verbose_name=_("Sub-Category"), related_name="third", on_delete=models.CASCADE)
+    type1 = models.ForeignKey(Category, verbose_name=_("Category"), related_name="first", on_delete=models.CASCADE)
+    type2 = models.ForeignKey(Category, verbose_name=_("Sub-Category"), related_name="second", on_delete=models.CASCADE)
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s (%s %s) in %s > %s" % (self.display_name, self.quantity, self.unit, self.type1.get_display_name(),
                                           self.type2.get_display_name())
 
@@ -76,7 +76,7 @@ class OutletItem(BaseItem):
 class OutletStock(CustomModel):
     deleted = models.BooleanField(_("Deleted"), default=False)
 
-    item = models.ForeignKey(BaseItem, verbose_name=_("Item"), on_delete=models.CASCADE)
+    item = models.ForeignKey(OutletItem, verbose_name=_("Item"), on_delete=models.CASCADE)
     brand = models.CharField(_("Brand"), max_length=100, blank=False, default="Generic")
     country = models.CharField(_("Country of origin"), max_length=100, blank=False, default="UAE",
                                validators=[RegexValidator(regex=r'^[a-zA-Z ]+$',
