@@ -23,12 +23,6 @@ UNIT_CHOICES = (
 CURRENCY_CHOICES = (
     (0.0, _("NRS")),
     (1.0, _("AED")),
-    (2.0, _("USD")),
-    (3.0, _("EUR")),
-    (4.0, _("SAR")),
-    (5.0, _("KWD")),
-    (6.0, _("OMR")),
-    (7.0, _("BHD")),
 )
 
 COUNTRY_CHOICES = (("United Arab Emirates", _('United Arab Emirates')),
@@ -36,7 +30,6 @@ COUNTRY_CHOICES = (("United Arab Emirates", _('United Arab Emirates')),
                    )
 
 VAT_CHOICES = {
-    "Nepal": 0.13,
     "India": 0.135,
     "United Arab Emirates": 0.05,
 }
@@ -49,14 +42,6 @@ STATUS_CHOICES = ((0, _("Pending")),
                   (4, _("Enroute")),
                   (5, _("Delivered"))
                   )
-
-SHIPPER_CHOICES = ((0, _("Store")),
-                   (1, _("InfiExpress")),
-                   )
-
-ITEM_CHOICES = (("combo", _("combo")),
-                ("single", _("single")),
-                )
 
 KTM = 'Kathmandu'
 LTP = 'Lalitpur'
