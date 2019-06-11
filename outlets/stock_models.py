@@ -1,25 +1,160 @@
+from django.contrib.postgres.fields import ArrayField
+from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from django.db import models
+from django.db.models.signals import post_save
+from django.utils.translation import gettext_lazy as _
 
+from libs.constants import CURRENCY_CHOICES, UNIT_CHOICES
+from libs.db_func import update_file_path, STOCK_IMAGE_PATH
+from libs.fields import SizeRestrictedThumbnailerField, CustomJsonField
+from libs.models import CustomModel
+from libs.utils import get_absolute_media_url
 from outlets.category_models import Category
-from outlets.outlet_models import Outlet
+from outlets.signals import create_thumbnail
 
 
-class Item(models.Model):
+def item_image_path(instance, filename):
+    return update_file_path(
+        STOCK_IMAGE_PATH + '{0}/item_{1}.{2}'.format(
+            getattr(getattr(instance, 'group', {}), 'id', "public"), instance.display_name, filename.split('.')[-1]))
+
+
+class BaseItem(CustomModel):
     class Meta:
         verbose_name_plural = "Item"
 
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    outlets = models.ManyToManyField(Outlet)
-    name = models.CharField("Item", max_length=100)
-    uom = models.CharField("UOM", max_length=50)
-    image = models.ImageField("Image", blank=True,null= True)
-    price = models.DecimalField("Price", decimal_places=2, max_digits=10)
-    description = models.TextField("Description", max_length=500)
-    quantity = models.FloatField("Quantity", max_length=25)
-    created_date = models.DateTimeField("Created Date")
+    display_name = models.CharField(_("Display name"), max_length=500, blank=False)
+    quantity = models.FloatField(_("UOM (Quantity)"), default=1, help_text=_("1.5 in 1.5 liters"),
+                                 validators=[MinValueValidator(0, message=_("Quantity is below allocation.")),
+                                             MaxValueValidator(100000, message=_("Quantity exceeds maximum allocation.")
+                                                               ),
+                                             ], blank=False, null=False)
+    unit = models.CharField(_("UOM (Unit)"), max_length=20, choices=UNIT_CHOICES, help_text=_("liters in 1.5 liters"))
+
+    search_fields = CustomJsonField(default=dict(), blank=True)  # auto
+    filters = ArrayField(default=list(), base_field=models.CharField(max_length=400), null=True, blank=True)
+
+    image = SizeRestrictedThumbnailerField(_("Image"), upload_to=item_image_path, null=True, blank=False,
+                                           max_upload_size=10485760, resize_source=dict(size=(800, 0), sharpen=True,
+                                                                                        replace_alpha="#fff"),
+                                           help_text="`max_file_size`: 10 MB")
+    # image2 = SizeRestrictedThumbnailerField(_("Different View Image"), upload_to=item_image_path_2, blank=True,
+    #                                         null=True, max_upload_size=10485760,
+    #                                         help_text="Optional; `max_file_size`: 10 MB",
+    #                                         resize_source=dict(size=(800, 0), sharpen=True, replace_alpha="#fff"))
+    # image3 = SizeRestrictedThumbnailerField(_("Different View Image"), upload_to=item_image_path_3, blank=True,
+    #                                         null=True, max_upload_size=10485760,
+    #                                         help_text="Optional; `max_file_size`: 10 MB",
+    #                                         resize_source=dict(size=(800, 0), sharpen=True, replace_alpha="#fff"))
+    # image4 = SizeRestrictedThumbnailerField(_("Different View Image"), upload_to=item_image_path_4, blank=True,
+    #                                         null=True, max_upload_size=10485760,
+    #                                         help_text="Optional; `max_file_size`: 10 MB",
+    #                                         resize_source=dict(size=(800, 0), sharpen=True, replace_alpha="#fff"))
+
+    thumbnail = models.ImageField(_("thumbnail"), upload_to="photos/thumbnails/",
+                                  default='NA.png.120x120_q85_crop.jpg', blank=True)
+
+    def __unicode__(self):
+        return OutletItem.objects.get(id=self.id).__unicode__()
 
     def __str__(self):
-        return self.name
+        return self.display_name
+
+
+class OutletItem(BaseItem):
+    type1 = models.ForeignKey(Category, verbose_name=_("Category"), related_name="second", on_delete=models.CASCADE)
+    type2 = models.ForeignKey(Category, verbose_name=_("Sub-Category"), related_name="third", on_delete=models.CASCADE)
+
+    def __unicode__(self):
+        return "%s (%s %s) in %s > %s" % (self.display_name, self.quantity, self.unit, self.type1.get_display_name(),
+                                          self.type2.get_display_name())
+
+    def get_display_name(self):
+        return "{} in {} - {}".format(self.display_name, self.type2.get_display_name(), self.type1.get_display_name())
+
+
+class OutletStock(CustomModel):
+    deleted = models.BooleanField(_("Deleted"), default=False)
+
+    item = models.ForeignKey(BaseItem, verbose_name=_("Item"), on_delete=models.CASCADE)
+    brand = models.CharField(_("Brand"), max_length=100, blank=False, default="Generic")
+    country = models.CharField(_("Country of origin"), max_length=100, blank=False, default="UAE",
+                               validators=[RegexValidator(regex=r'^[a-zA-Z ]+$',
+                                                          message=_("Country can only have characters and spaces."))
+                                           ]
+                               )
+    outlet = models.ForeignKey("outlets.Outlet", verbose_name=_("Outlet"), on_delete=models.CASCADE)
+    sku = models.CharField(_("S.K.U stock code"), max_length=40)
+    available = models.IntegerField(_("Online Shopping Quantity"), default=0, blank=True,
+                                    # info store's stock have blankable `available`field
+                                    help_text=_("'35' items available in infinia stock"),
+                                    validators=[
+                                        MinValueValidator(0, message=_("Minimum value should be zero."), )
+                                    ])
+    minimum_quantity = models.IntegerField(_("Minimum to be in cart"), default=0, blank=True,
+                                           validators=[
+                                               MinValueValidator(0, "Minimum value can only be zero")
+                                           ],
+                                           help_text=_("least number of this item to be bought"))
+    maximum_quantity = models.IntegerField(_("Maximum to be in cart"), null=True, blank=True,
+                                           validators=[
+                                               MaxValueValidator(1000, "Maximum value 1000 for now.")
+                                           ],
+                                           help_text=_("max number of this item can be bought"))
+    price = models.FloatField(_("Selling Price"), default=1, help_text=_("Enter price here!"),
+                              validators=[MinValueValidator(0.1, message=_("Price is below allocation.")),
+                                          MaxValueValidator(1000000, message=_("Price exceeds maximum allocation.")),
+                                          ])
+    currency = models.FloatField(_("Currency"), choices=CURRENCY_CHOICES, help_text=_("Choose currency"),
+                                 max_length=20)
+    description = models.TextField(_("Description"), help_text=_("short description for customers"), null=True,
+                                   blank=True)
+
+    extra = CustomJsonField(_("Other details"),
+                            help_text=_('{"old_price": 299, "discount": 0.05}'), blank=True,
+                            null=True)
+    ratings = models.FloatField(_("Rating"), default=0.0,
+                                validators=[
+                                    MinValueValidator(0, message=_("Price is below minimum allocation.")),
+                                    MaxValueValidator(5, message=_("Price exceeds maximum allocation.")),
+                                ]
+                                )
+    rating_counts = models.IntegerField(_("Rating Counts"), default=0,
+                                        validators=[
+                                            MinValueValidator(0, message=_("Number of Ratings is below zero.")),
+                                        ]
+                                        )
+
+    @property
+    def thumbnail(self):
+        return self.item.thumbnail
+
+    def get_thumbnail_name(self):
+        return self.thumbnail.name
+
+    def get_thumbnail(self):
+        if self.thumbnail:
+            return get_absolute_media_url(self.thumbnail.name)
+
+    def get_item_name(self):
+        # excludes store
+        return "%s %s" % (self.item, self.sku)
+
+    def get_price_per_item(self, **kwargs):
+        return self.price
+
+    def __str__(self):
+        return "%s %s (%s)" % (self.item, self.sku, self.outlet)
+
+    class Meta:
+        unique_together = (("outlet", "sku", "deleted"),)
+
+
+post_save.connect(create_thumbnail, sender=BaseItem)
+
+
+class PriceModifiers(models.Model):
+    pass
 
 
 '''class Stock(models.Model):
