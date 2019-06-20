@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Occasions</title>
+</head>
+<body>
+    <tr >
+        <td>{{ object.sku }}</td>
+        <td>
+            <a href="#">
+            {{ object.item.display_name }}
+            </a>
+        </td>
+        <td>{{ object.brand }}</td>
+        <td>{{ object.item.quantity }} {{ object.item.unit|title }}</td>
+        <td>{{ object.price }}</td>
+        <td>{{ object.available }}</td>
+    </tr>
+</body>
+</html>
