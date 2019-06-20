@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Occasions</title>
+</head>
+<body>
+
+    {% for item in object_list %}
+        <tr >
+            <td>{{ item.sku }}</td>
+            <td>
+                <a href="{% url 'outlets:stocks:detail' outlet_id=outlet_id pk=item.id %}">
+                {{ item.item.display_name }}
+                </a>
+            </td>
+            <td>{{ item.brand }}</td>
+            <td>{{ item.item.quantity }} {{ item.item.unit|title }}</td>
+            <td>{{ item.price }}</td>
+            <td>{{ item.available }}</td>
+        </tr>
+        {% endfor %}
+
+</body>
+</html>
