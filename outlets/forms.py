@@ -9,5 +9,7 @@ class OutletForm(ModelForm):
         #
         exclude = ()
 
+class OutletStockAdminForm(ModelForm):
+    pass
 
 
