@@ -148,4 +148,5 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'staticfiles')
 ]
 
+SITE_ID = 1
 # SHELL_PLUS = "ipython"
