@@ -1,12 +1,15 @@
+from django.contrib import messages
+from django.http import JsonResponse
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 
 from libs.mixins import OutletContextForTemplatesMixin, OutletKwargForFormMixin, OutletPermissionCheckMixin
-from outlets.forms import OutletStockAdminForm
+from outlets.forms import OutletStockAdminForm, OutletItemAdminForm
 
-from outlets.stock_models import OutletStock
+from outlets.stock_models import OutletStock, OutletItem
 
 
 class ListStock(OutletPermissionCheckMixin, OutletContextForTemplatesMixin, ListView):
@@ -33,7 +36,38 @@ class DetailStock(OutletPermissionCheckMixin, OutletContextForTemplatesMixin, De
     queryset = OutletStock.objects.all()
     template_name = 'outlets/stock/detail_stock.html'
 
-#addstock
-#additem
+
+class AddStock(OutletPermissionCheckMixin, OutletContextForTemplatesMixin, OutletKwargForFormMixin,
+               CreateView):
+    model = OutletStock
+    form_class = OutletStockAdminForm
+    template_name = 'outlets/stock/add_stock.html'
+
+    def get_success_url(self):
+        return reverse('outlets:stocks:detail', kwargs={'outlet_id': self.outlet.id, 'pk': self.object.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super(AddStock, self).get_context_data(**kwargs)
+        context['item_form'] = OutletItemAdminForm(outlet=self.outlet)
+        context['operation'] = 'add'
+
+        return context
+
+
+class AddItem(OutletPermissionCheckMixin, OutletContextForTemplatesMixin, OutletKwargForFormMixin,
+              CreateView):
+    model = OutletItem
+    form_class = OutletItemAdminForm
+    template_name = 'outlets/stock/add_item.html'
+
+    def form_valid(self, form):
+        self.object = form.save()
+        return JsonResponse(dict(value=self.object.id, label=str(self.object)))
+
+    def form_invalid(self, form):
+        messages.error(self.request,
+                       "{}".format(form.errors))
+        return redirect(reverse('outlets:stocks:add', kwargs=dict(outlet_id=self.outlet.id)))
+
 #updateitem
 #deleteitem
