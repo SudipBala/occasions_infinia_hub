@@ -1,0 +1,55 @@
+<script type="text/javascript">
+
+    $('.jq_item_submit').submit(function (e) {
+        e.preventDefault();
+        var item = $('#modal_item');
+
+        var formData = new FormData();
+        formData.append('display_name', item.find('input[name=display_name]').val());
+        formData.append('type1', item.find('select[name=type1]').val());
+        formData.append('type2', item.find('select[name=type2]').val());
+        formData.append('type3', item.find('select[name=type3]').val());
+        formData.append('unit', item.find('select[name=unit]').val());
+        formData.append('quantity', item.find('input[name=quantity]').val());
+        formData.append('image', item.find('input[name=image]')[0].files[0]);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+        function postForm(url, formData){
+            return $.ajax({
+                type: 'POST',
+                url: url,
+                data: formData,
+                processData: false,
+                contentType: false,
+            })
+        }
+
+        function addOption(value, label){
+            var option = new Option(label, value);
+            $(option).attr('selected', 'selected');
+            $('select[name="item"]').append($(option));
+        }
+
+        function toggle(selector, type='toggle') {
+           selector.modal(type);
+        }
+
+        console.log(item.find('form')[0].checkValidity());
+        if (item.find('form')[0].checkValidity()) {
+            postForm("{% url 'outlets:stocks:add_item' outlet_id=outlet_id%}", formData)
+                    .done(function (jsonData){
+                        console.log(jsonData);
+                        addOption(jsonData['value'], jsonData['label']);
+                        toggle(item);
+                    }).fail(function (error) {
+                        console.log(error);
+                        alert("Something went wrong.");
+                    });
+        }
+        else {
+            alert("Fill the form correctly.");
+        }
+        return false;
+    });
+
+</script>
