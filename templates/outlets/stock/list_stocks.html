@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Occasions</title>
-</head>
-<body>
-
+{% extends 'index.html' %}
+{% load static %}
+{% block content %}
     {% for item in object_list %}
         <tr >
             <td>{{ item.sku }}</td>
@@ -20,6 +15,4 @@
             <td>{{ item.available }}</td>
         </tr>
         {% endfor %}
-
-</body>
-</html>
+{%  endblock %}
