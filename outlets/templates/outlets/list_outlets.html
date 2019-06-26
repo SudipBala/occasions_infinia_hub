@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Occasions</title>
+</head>
+<body>
+
+        {% for object in object_list %}
+            <tr >
+        <td>{{ object.slug }}</td>
+        <td>
+            <a href="#">
+            {{ object.display_name }}
+            </a>
+        </td>
+        <td>{{ object.street }}{{ object.city }} {{ object.country }}</td>
+        <td>{{ object.contact }}</td>
+        <td>{{ object.email }} </td>
+            </tr>
+            <br/>
+        {% endfor %}
+
+</body>
+</html>
