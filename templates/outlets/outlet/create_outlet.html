@@ -1,18 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Outlet</title>
-</head>
-<body>
+{% extends 'index.html' %}
+{% load static %}
+{% block content %}
 <form method="POST"> {% csrf_token %}
 {{ form.as_p }}
 <input type="submit" value="Save">
 </form>
-
-{% for a in outlets %}
-    {{ a.display_name }}
-    {{ a.description }}
-{% endfor %}
-</body>
-</html>
+{% endblock %}
