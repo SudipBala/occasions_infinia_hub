@@ -14,14 +14,14 @@ class OutletsCreateView(View):
 
         context = {'outlets': get_all_outlets}
 
-        return render(request, 'outlets/create_outlet.html', context)
+        return render(request, 'outlets/outlet/create_outlet.html', context)
 
     def post(self, request):
         form = OutletForm(request.POST or None)
         if form.is_valid()():
             form.save()
         context = {'outlets': form}
-        return render((request, 'outlets/create_outlet.html', context))
+        return render((request, 'outlets/outlet/create_outlet.html', context))
 
 
 def outlet_create_view(request):
@@ -31,35 +31,35 @@ def outlet_create_view(request):
     context = {
         'form': form
     }
-    return render(request, "outlets/create_outlet.html", context)
+    return render(request, "outlets/outlet/create_outlet.html", context)
 
 
 def outlet_list_view(request):
     qs = Outlet.objects.all()
-    template_name = "outlets/list_outlets.html"
+    template_name = "outlets/outlet/list_outlets.html"
     context = {'object_list': qs}
     return render(request, template_name, context)
 
 
-class ItemList(ListView):
-    model = BaseItem
-    fields = '__all__'
-
-
-class ItemDetail(DetailView):
-    model = BaseItem
-
-
-class ItemCreate(CreateView):
-    model = BaseItem
-    fields = '__all__'
-
-
-class ItemUpdate(UpdateView):
-    model = BaseItem
-    fields = '__all__'
-
-
-class ItemDelete(DeleteView):
-    model = BaseItem
-    fields = '__all__'
+# class ItemList(ListView):
+#     model = BaseItem
+#     fields = '__all__'
+#
+#
+# class ItemDetail(DetailView):
+#     model = BaseItem
+#
+#
+# class ItemCreate(CreateView):
+#     model = BaseItem
+#     fields = '__all__'
+#
+#
+# class ItemUpdate(UpdateView):
+#     model = BaseItem
+#     fields = '__all__'
+#
+#
+# class ItemDelete(DeleteView):
+#     model = BaseItem
+#     fields = '__all__'
