@@ -1,0 +1,72 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block css %}
+    <link rel="stylesheet"
+          href="{% static "AdminLTE/dataTables.bootstrap.min.css" %}">
+{% endblock %}
+{% block content %}
+
+    <section class="content-header">
+        <h1>
+            Stocks
+            <small>Stock List</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i>Home</a></li>
+            <li><a href="#">Stocks</a></li>
+            <li class="active">List</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title">Stock List</h3>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <table id="example2" class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <th>SKU</th>
+                                <th>Display Name</th>
+                                <th>Brand</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Available</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in object_list %}
+                                <tr>
+                                    <td>{{ item.sku }}</td>
+                                    <td>
+                                        <a href="{% url 'outlets:stocks:detail' outlet_id=outlet_id pk=item.id %}">
+                                            {{ item.item.display_name }}
+                                        </a>
+                                    </td>
+                                    <td>{{ item.brand }}</td>
+                                    <td>{{ item.item.quantity }} {{ item.item.unit|title }}</td>
+                                    <td>{{ item.price }}</td>
+                                    <td>{{ item.available }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </section>
+{% endblock %}
+{% block js %}
+    <script src="{% static "AdminLTE/jquery.dataTables.min.js" %}"></script>
+{% endblock %}

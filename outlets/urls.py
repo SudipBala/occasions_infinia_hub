@@ -16,8 +16,9 @@ Including another URLconf
 
 from django.urls import path, include
 
-from outlets.views import outlet_create_view
+app_name = 'outlets'
 
 urlpatterns = [
-    path('', include(('outlets.outlets_views.urls', 'outlets'), namespace="outlet"))
+    path('', include(('outlets.outlets_views.urls', 'outlets'), namespace="outlet")),
+    path('<int:outlet_id>/stocks/', include('outlets.stock_views.urls', namespace="stocks"))
 ]

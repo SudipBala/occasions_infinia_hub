@@ -1,0 +1,16 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block content %}
+    <tr >
+        <td>{{ object.sku }}</td>
+        <td>
+            <a href="#">
+            {{ object.item.display_name }}
+            </a>
+        </td>
+        <td>{{ object.brand }}</td>
+        <td>{{ object.item.quantity }} {{ object.item.unit|title }}</td>
+        <td>{{ object.price }}</td>
+        <td>{{ object.available }}</td>
+    </tr>
+{%  endblock %}
