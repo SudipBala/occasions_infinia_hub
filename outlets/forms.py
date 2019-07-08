@@ -93,3 +93,13 @@ class OutletStockAdminForm(forms.ModelForm):
             self.instance.image = stock.image
             self.instance.save()
         return super(OutletStockAdminForm, self).save()
+
+
+class OutletsAdminForm(forms.ModelForm):
+
+    class Meta:
+        model = Outlet
+        fields = ['display_name', 'opening_hours', 'closing_hours', 'country', 'city', 'street', 'longitude', 'latitude',
+                  'time_zone', 'currency', 'delivery_area', 'contact', 'tax_type', 'slug', 'email', 'connected_email']
+
+
