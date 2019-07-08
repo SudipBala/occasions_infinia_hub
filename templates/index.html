@@ -353,6 +353,14 @@
 <script src="{% static "js/jquery.min.js" %}"></script>
 <script src="{% static "js/jquery-ui.min.js" %}"></script>
 <script src="{% static "js/bootstrap.min.js" %}"></script>
+ <script type="text/javascript">
+    $('.btn-danger').click(function(e) {
+        if (!confirm("Are you sure to delete this item?")){
+            e.preventDefault();
+        }
+    });
+</script>
+
 {% block js %}
 {% endblock %}
 </body>
