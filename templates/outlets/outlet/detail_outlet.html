@@ -1,0 +1,20 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block css %}
+    <link href="{% static "css/dataTables.bootstrap.min.css" %}">
+{% endblock %}
+{% block content %}
+    <tr>
+    <tr>
+        <td>{{ object.slug }}</td>
+        <td>
+            <a href="#">
+                {{ object.display_name }}
+            </a>
+        </td>
+        <td>{{ object.street }}{{ object.city }} {{ object.country }}</td>
+        <td>{{ object.contact }}</td>
+        <td>{{ object.email }} </td>
+    </tr>
+    </tr>
+{% endblock %}
