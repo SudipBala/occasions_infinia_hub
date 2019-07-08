@@ -69,5 +69,39 @@ class AddItem(OutletPermissionCheckMixin, OutletContextForTemplatesMixin, Outlet
                        "{}".format(form.errors))
         return redirect(reverse('outlets:stocks:add', kwargs=dict(outlet_id=self.outlet.id)))
 
-#updateitem
-#deleteitem
+
+class EditStock(OutletPermissionCheckMixin, OutletKwargForFormMixin, OutletContextForTemplatesMixin,
+                UpdateView):
+    model = OutletStock
+    queryset = OutletStock.objects.all()
+    form_class = OutletStockAdminForm
+    template_name = 'outlets/stock/add_stock.html'
+
+    def get_queryset(self):
+        return super(EditStock, self).get_queryset().filter(outlet=self.outlet)
+
+    def get_success_url(self):
+        return reverse('outlets:stocks:detail', kwargs={'outlet_id': self.outlet.id, 'pk': self.object.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super(EditStock, self).get_context_data(**kwargs)
+        context['operation'] = 'Edit'
+        return context
+
+
+class DeleteStock(OutletPermissionCheckMixin, OutletContextForTemplatesMixin, DeleteView):
+    model = OutletStock
+    queryset = OutletStock.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
+
+    def get_success_url(self):
+        messages.success(self.request,
+                         "{message} S.K.U - {sku}, {name}".format(
+                             message="The stock has been deleted",
+                             sku=self.object.sku,
+                             name=self.object
+                         ))
+        return reverse('outlets:stocks:list', kwargs={'outlet_id': self.outlet.id})
+

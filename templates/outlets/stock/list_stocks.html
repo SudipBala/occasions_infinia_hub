@@ -1,9 +1,6 @@
 {% extends 'index.html' %}
 {% load static %}
-{% block css %}
-    <link rel="stylesheet"
-          href="{% static "css/dataTables.bootstrap.min.css" %}">
-{% endblock %}
+
 {% block content %}
 
     <section class="content-header">
@@ -66,7 +63,4 @@
         </div>
         <!-- /.row -->
     </section>
-{% endblock %}
-{% block js %}
-    <script src="{% static "AdminLTE/../../../staticfiles/js/jquery.dataTables.min.js" %}"></script>
 {% endblock %}
