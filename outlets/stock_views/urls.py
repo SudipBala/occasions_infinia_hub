@@ -1,6 +1,6 @@
 from django.urls import path
 
-from outlets.stock_views.views import ListStock, DetailStock, AddStock, AddItem
+from outlets.stock_views.views import ListStock, DetailStock, AddStock, AddItem, EditStock, DeleteStock
 
 app_name = 'stocks'
 
@@ -10,4 +10,6 @@ urlpatterns = [
     path('create/', AddStock.as_view(), name="create"),
     path('add-item/', AddItem.as_view(), name="add_item"),
     path('<int:pk>/', DetailStock.as_view(), name="detail"),
+    path('<int:pk>/edit/', EditStock.as_view(), name="edit"),
+    path('<int:pk>/delete/', DeleteStock.as_view(), name="delete"),
 ]
