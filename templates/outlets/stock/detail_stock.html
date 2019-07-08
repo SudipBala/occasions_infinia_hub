@@ -14,13 +14,13 @@
         <td>{{ object.available }}</td>
     </tr>
 
-    <div class="glyphicon-custom btn-danger"style="background-color:#d2322d; height: 34px;width: 36px; ">
-            <a href="{% url 'outlets:stocks:delete' outlet_id=outlet_id pk=object.pk %}">
+    <div class="">
+        <a href="{% url 'outlets:stocks:delete' outlet_id=outlet_id pk=object.pk %}">
+            <div>
                 <div>
-                    <div>
-                        <span class="fa fa-trash"></span>
-                    </div>
+                    <span class="fa fa-trash"></span>
                 </div>
-            </a>
-        </div>
+            </div>
+        </a>
+    </div>
 {%  endblock %}
