@@ -1,65 +1,53 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views import View
+from django.urls import reverse
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 
-from outlets.forms import OutletForm
+from libs.mixins import OutletPermissionCheckMixin, OutletContextForTemplatesMixin
+from outlets.forms import OutletForm, OutletsAdminForm
 from outlets.outlet_models import Outlet
-from outlets.stock_models import BaseItem
 
 
-class OutletsCreateView(View):
+class OutletCreate(CreateView):
+    template_name = 'outlets/outlet/create_outlet.html'
+    form_class = OutletsAdminForm
+    queryset = Outlet.objects.all()
 
-    def get(self, request):
-        get_all_outlets = Outlet.objects.all()
-
-        context = {'outlets': get_all_outlets}
-
-        return render(request, 'outlets/outlet/create_outlet.html', context)
-
-    def post(self, request):
-        form = OutletForm(request.POST or None)
-        if form.is_valid()():
-            form.save()
-        context = {'outlets': form}
-        return render((request, 'outlets/outlet/create_outlet.html', context))
+    def get_success_url(self):
+        return reverse('outlets:outlet:detail', kwargs={'id': self.object.pk})
 
 
-def outlet_create_view(request):
-    form = OutletForm(request.POST or None)
-    if form.is_valid():
-        form.save()
-    context = {
-        'form': form
-    }
-    return render(request, "outlets/outlet/create_outlet.html", context)
-
-
-def outlet_list_view(request):
-    qs = Outlet.objects.all()
+class OutletList(ListView):
     template_name = "outlets/outlet/list_outlets.html"
-    context = {'object_list': qs}
-    return render(request, template_name, context)
+    queryset = Outlet.objects.all()
 
 
-# class ItemList(ListView):
-#     model = BaseItem
-#     fields = '__all__'
-#
-#
-# class ItemDetail(DetailView):
-#     model = BaseItem
-#
-#
-# class ItemCreate(CreateView):
-#     model = BaseItem
-#     fields = '__all__'
-#
-#
-# class ItemUpdate(UpdateView):
-#     model = BaseItem
-#     fields = '__all__'
-#
-#
-# class ItemDelete(DeleteView):
-#     model = BaseItem
-#     fields = '__all__'
+class OutletDetail(DetailView):
+    # model = Outlet
+    # queryset = Outlet.objects.all()
+    template_name = 'outlets/outlet/detail_outlet.html'
+
+    def get_object(self):
+        id_ = self.kwargs.get("id")
+        return get_object_or_404(Outlet, id=id_)
+
+
+class OutletUpdate(UpdateView):
+    template_name = 'outlets/outlet/create_outlet.html'
+    form_class = OutletsAdminForm
+    queryset = Outlet.objects.all()
+
+    def get_object(self):
+        id_ = self.kwargs.get("id")
+        return get_object_or_404(Outlet, id=id_)
+
+    def form_valid(self, form):
+        print(form.cleaned_data)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('outlets:outlet:detail',kwargs={'id': self.object.pk})
+
+
+
+
