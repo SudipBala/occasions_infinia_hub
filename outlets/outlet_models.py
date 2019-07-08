@@ -70,9 +70,6 @@ class Outlet(CustomModel):
                                         ],
                                         error_messages={'unique': "Email address already exists"})
 
-    license = models.FileField(_("Outlet Registration License"), upload_to="license", null=True, blank=True,
-                               max_length=500)
-
     image = SizeRestrictedThumbnailerField(_("Outlet Logo"), upload_to=outlet_image_path,
                                            max_upload_size=10485760, resize_source=dict(size=(300, 0),
                                                                                         sharpen=True,
@@ -82,3 +79,4 @@ class Outlet(CustomModel):
 
     def __str__(self):
         return "%s (%s,%s)" % (self.display_name, self.city, self.country)
+
