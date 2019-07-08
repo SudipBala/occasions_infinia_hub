@@ -3,53 +3,121 @@
 {% block content %}
 
     <div>
-    {% if operation == 'add' %}
-        <h1> Add stock</h1>
-             <form role="form" method="POST" enctype="multipart/form-data">
-                 {% csrf_token%}
-                 <a class="pointer modal-trigger" data-toggle="modal" data-target="#modal_item">
-                     <span class="badge bg-blue">
-                         <i class="fa fa-fw fa-plus-circle"></i>
-                         Add Item
-                     </span>
-                 </a>
-                 {{ form }}
-                 <button type="submit" class="btn btn-primary">Submit</button>
-             </form>
-    {% else %}
-        <h1> Edit Stock</h1>
-            <form role="form" method="POST" enctype="multipart/form-data">
-            {% csrf_token%}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">Submit</button>
+        <form role="form" id="stockForm" method="POST" enctype="multipart/form-data">
+            {% if operation.lower == "add" %}
+                <div class="col-sm-12">
+                    <div class="col-sm-9">
+                        <div class="dangertext">{{ form.item.errors }}</div>
+                        <label>{{ form.item.label }}</label>
+                        <div class=" material-select" id="item-select">{{ form.item }}</div>
+                        <span class="helptext">{{ form.item.help_text }}</span>
+                    </div>
+                    <div class="col-sm-1 material-ignore" style="padding-top: 28px;">
+                        <a class="pointer modal-trigger" data-toggle="modal" data-target="item">
+                        <span class="badge bg-blue">
+                            <i class="fa fa-fw fa-plus-circle"></i>
+                            Add Item
+                        </span>
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="dangertext">{{ form.item.errors }}</div>
+                <label>{{ form.item.label }}</label>
+                {{ form.instance.item }}
+                <div class="hide material-select">
+                    {{ form.item }}
+                </div>
+
+            {% endif %}
+
+            <p>
+            <div class="dangertext">{{ form.sku.errors }}</div>
+            <label>{{ form.sku.label }}</label>
+            {{ form.sku }}
+            <span class="helptext">{{ form.sku.help_text }}</span>
+            </p>
+            <p>
+            <div class="dangertext">{{ form.price.errors }}</div>
+            <label>{{ form.price.label }}</label>
+            {{ form.price }}
+            <span class="helptext">{{ form.price.help_text }}</span>
+            </p>
+            <p>
+            <div class="dangertext">{{ form.available.errors }}</div>
+            <label>{{ form.available.label }}</label>
+            {{ form.available }}
+            <span class="helptext">{{ form.available.help_text }}</span>
+            </p>
+            <p>
+            <div class="dangertext">{{ form.country.errors }}</div>
+            <label>{{ form.country.label }}</label>
+            {{ form.country }}
+            <span class="helptext">{{ form.country.help_text }}</span>
+            </p>
+            <p>
+            <div class="dangertext">{{ form.currency.errors }}</div>
+            <label>{{ form.currency.label }}</label>
+            {{ form.currency }}
+            <span class="helptext">{{ form.currency.help_text }}</span>
+            </p>
+            <p>
+            <div class="dangertext">{{ form.maximum_quantity.errors }}</div>
+            <label>{{ form.maximum_quantity.label }}</label>
+            {{ form.maximum_quantity }}
+            <span class="helptext">{{ form.maximum_quantity.help_text }}</span>
+            </p>
+            <p>
+            <div class="dangertext">{{ form.minimum_quantity.errors }}</div>
+            <label>{{ form.minimum_quantity.label }}</label>
+            {{ form.minimum_quantity }}
+            <span class="helptext">{{ form.minimum_quantity.help_text }}</span>
+            </p>
+            <p>
+            <div class="dangertext">{{ form.brand.errors }}</div>
+            <label>{{ form.brand.label }}</label>
+            {{ form.brand }}
+            <span class="helptext">{{ form.brand.help_text }}</span>
+            </p>
+            <p>
+            <div class="dangertext">{{ form.description.errors }}</div>
+            <label>{{ form.description.label }}</label>
+            {{ form.description }}
+            <span class="helptext">{{ form.description.help_text }}</span>
+            </p>
+            <p>
+            <div class="dangertext">{{ form.extra.errors }}</div>
+            <label>{{ form.extra.label }}</label>
+            {{ form.extra }}
+            <span class="helptext">{{ form.extra.help_text }}</span>
+            </p>
         </form>
-    {% endif %}
 
     </div>
 
     <div class="modal fade" id='modal_item' tabindex="-1" role="dialog" aria-labelledby='item'>
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title" id="myModalLabel">Add New Item</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                    aria-hidden="true">&times;</span></button>
-          </div>
-          <div class="modal-body">
-              <div class="dangertext" id="modal-error"></div>
-            {% if form %}
-                <div class="modal-form">
-                    <form class='jq_item_submit' method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        {{ item_form.as_p }}
-                        <button type="submit" class="modal-action btn btn-primary">Submit</button>
-                    </form>
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">Add New Item</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
                 </div>
-            {% else %}
-            {% endif %}
-          </div>
+                <div class="modal-body">
+                    <div class="dangertext" id="modal-error"></div>
+                    {% if form %}
+                        <div class="modal-form">
+                            <form class='jq_item_submit' method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {{ item_form.as_p }}
+                                <button type="submit" class="modal-action btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+                    {% else %}
+                    {% endif %}
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
 {% endblock %}
