@@ -5,16 +5,16 @@
 {% endblock %}
 {% block content %}
     <tr>
-    <tr>
         <td>{{ object.slug }}</td>
-        <td>
-            <a href="#">
-                {{ object.display_name }}
-            </a>
-        </td>
+        <td>{{ object.display_name }}</td>
         <td>{{ object.street }}{{ object.city }} {{ object.country }}</td>
         <td>{{ object.contact }}</td>
         <td>{{ object.email }} </td>
     </tr>
-    </tr>
+
+    <div class="btn-danger">
+        <a href="{% url 'outlets:outlet:delete' pk=object.id %}">
+            <button type="button">delete</button>
+        </a>
+    </div>
 {% endblock %}

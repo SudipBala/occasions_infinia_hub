@@ -40,7 +40,7 @@
                                 <tr>
                                     <td>{{ object.slug }}</td>
                                     <td>
-                                        <a href="#">
+                                        <a href="{% url 'outlets:outlet:detail' id=object.pk %}">
                                             {{ object.display_name }}
                                         </a>
                                     </td>

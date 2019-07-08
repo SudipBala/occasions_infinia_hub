@@ -1,10 +1,8 @@
-from django.shortcuts import render, get_object_or_404
-from django.views import View
+from django.contrib import messages
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
-
-from libs.mixins import OutletPermissionCheckMixin, OutletContextForTemplatesMixin
-from outlets.forms import OutletForm, OutletsAdminForm
+from outlets.forms import OutletsAdminForm
 from outlets.outlet_models import Outlet
 
 
@@ -46,8 +44,21 @@ class OutletUpdate(UpdateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('outlets:outlet:detail',kwargs={'id': self.object.pk})
+        return reverse('outlets:outlet:detail', kwargs={'id': self.object.pk})
 
+
+class OutletDelete(DeleteView):
+    model = Outlet
+    queryset = Outlet.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
+
+    def get_success_url(self):
+        messages.success(self.request, "{message}".format(
+            message="The outlet has been deleted"
+        ))
+        return reverse('outlets:outlet:list')
 
 
 
