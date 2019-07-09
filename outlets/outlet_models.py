@@ -50,7 +50,7 @@ class Outlet(CustomModel):
     thumbnail = models.ImageField("Thumbnail", upload_to="photos/thumbnails/outlets/", max_length=500, default="",
                                   blank=True)
     slug = models.SlugField("Short Display Name", null=True, blank=True, max_length=25,
-                            help_text="Used to share your store among Customers")
+                            help_text="Used to share your store among Customers", validators=[validators.RegexValidator])
     email = models.EmailField("Outlet Contact E-mail", blank=False, null=False,
                               validators=[
                                   validators.EmailValidator(
