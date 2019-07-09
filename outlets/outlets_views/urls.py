@@ -6,7 +6,7 @@ from outlets.outlets_views.views import OutletDetail, OutletCreate, OutletUpdate
 urlpatterns = [
     # path('create/', outlet_create_view, name="list_outlets")
 
-    path('list/', OutletList.as_view(), name="list"),
+    path('', OutletList.as_view(), name="list"),
     path('create/', OutletCreate.as_view(), name="create"),
     path('<int:id>/', OutletDetail.as_view(), name="detail"),
     path('<int:id>/update', OutletUpdate.as_view(), name='update'),
