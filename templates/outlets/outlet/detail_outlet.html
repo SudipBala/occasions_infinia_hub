@@ -11,7 +11,12 @@
 
     <div class="btn-danger">
         <a href="{% url 'outlets:outlet:delete' pk=object.id %}">
-            <button type="button">delete</button>
+            <button type="button">Delete</button>
+        </a>
+    </div>
+    <div class="btn-bitbucket">
+        <a href="{% url 'outlets:outlet:update' id=object.id %}">
+            <button type="button">Update</button>
         </a>
     </div>
 {% endblock %}
