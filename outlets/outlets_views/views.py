@@ -2,6 +2,8 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
+
+from libs.mixins import IsAdminUserMixin
 from outlets.forms import OutletsAdminForm
 from outlets.outlet_models import Outlet
 
@@ -12,10 +14,10 @@ class OutletCreate(CreateView):
     queryset = Outlet.objects.all()
 
     def get_success_url(self):
-        return reverse('outlets:outlet:detail', kwargs={'id': self.object.pk})
+        return reverse('outlets:outlet:list')
 
 
-class OutletList(ListView):
+class OutletList(IsAdminUserMixin, ListView):
     template_name = "outlets/outlet/list_outlets.html"
     queryset = Outlet.objects.all()
 
@@ -44,7 +46,7 @@ class OutletUpdate(UpdateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('outlets:outlet:detail', kwargs={'id': self.object.pk})
+        return reverse('outlets:outlet:list')
 
 
 class OutletDelete(DeleteView):
