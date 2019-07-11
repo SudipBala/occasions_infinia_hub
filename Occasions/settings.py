@@ -150,3 +150,5 @@ STATICFILES_DIRS = [
 
 SITE_ID = 1
 # SHELL_PLUS = "ipython"
+
+LOGIN_REDIRECT_URL = '/outlets/outlet'
