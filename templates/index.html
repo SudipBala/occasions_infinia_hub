@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Occasions</title>
@@ -247,8 +247,8 @@
                     <!-- User Account: style can be found in dropdown.less -->
                     <li class="dropdown user user-menu">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <img src="{% static "img/test_image.jpg" %}" class="user-image" alt="User Image">
                             <span class="hidden-xs">Anup Rayamajhi</span>
+                            <span class="hidden-xs"><a href="{% url 'logout' %}">Log Out</a></span>
                         </a>
                         <ul class="dropdown-menu">
                             <!-- User image -->
