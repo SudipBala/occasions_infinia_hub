@@ -20,5 +20,6 @@ app_name = 'outlets'
 
 urlpatterns = [
     path('outlet/', include(('outlets.outlets_views.urls', 'outlets'), namespace="outlet")),
-    path('<int:outlet_id>/stocks/', include('outlets.stock_views.urls', namespace="stocks"))
+    path('<int:outlet_id>/stocks/', include(('outlets.stock_views.urls', 'outlets'), namespace="stocks")),
+    path('<int:outlet_id>/delivery/', include(('delivery.urls', 'delivery'), namespace="delivery"))
 ]
