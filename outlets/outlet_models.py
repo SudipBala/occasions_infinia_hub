@@ -49,7 +49,7 @@ class Outlet(CustomModel):
     tax_type = models.CharField(choices=(("GST", "GST"), ("TRN", "TRN")), max_length=3)
     thumbnail = models.ImageField("Thumbnail", upload_to="photos/thumbnails/outlets/", max_length=500, default="",
                                   blank=True)
-    slug = models.SlugField("Short Display Name", null=True, blank=True, max_length=25,
+    slug = models.SlugField("Short Display Name", null=True, blank=False, max_length=25,
                             help_text="Used to share your store among Customers", validators=[validators.RegexValidator])
     email = models.EmailField("Outlet Contact E-mail", blank=False, null=False,
                               validators=[
@@ -75,8 +75,10 @@ class Outlet(CustomModel):
                                                                                         sharpen=True,
                                                                                         replace_alpha="#fff"
                                                                                         ),
-                                           max_length=500)
+                                           max_length=500,blank=True)
 
     def __str__(self):
         return "%s (%s,%s)" % (self.display_name, self.city, self.country)
+
+
 
