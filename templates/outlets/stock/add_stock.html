@@ -4,6 +4,7 @@
 
     <div>
         <form role="form" id="stockForm" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
             {% if operation.lower == "add" %}
                 <div class="col-sm-12">
                     <div class="col-sm-9">
@@ -13,7 +14,7 @@
                         <span class="helptext">{{ form.item.help_text }}</span>
                     </div>
                     <div class="col-sm-1 material-ignore" style="padding-top: 28px;">
-                        <a class="pointer modal-trigger" data-toggle="modal" data-target="item">
+                        <a class="pointer modal-trigger" data-toggle="modal" data-target="#modal_item">
                         <span class="badge bg-blue">
                             <i class="fa fa-fw fa-plus-circle"></i>
                             Add Item
