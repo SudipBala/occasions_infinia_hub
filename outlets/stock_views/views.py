@@ -36,6 +36,10 @@ class DetailStock(OutletPermissionCheckMixin, OutletContextForTemplatesMixin, De
     queryset = OutletStock.objects.all()
     template_name = 'outlets/stock/detail_stock.html'
 
+    def get_queryset(self):
+        qs = super(DetailStock, self).get_queryset().filter(outlet=self.outlet)
+        return qs
+
 
 class AddStock(OutletPermissionCheckMixin, OutletContextForTemplatesMixin, OutletKwargForFormMixin,
                CreateView):
