@@ -1,4 +1,6 @@
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import JsonResponse
+from django.views.generic.base import View
 
 from outlets.outlet_models import Outlet
 
@@ -48,3 +50,10 @@ class SetOutletInFormMixin(object):
     def __init__(self, *args, **kwargs):
         self.outlet = kwargs.pop('outlet', None)
         super(SetOutletInFormMixin, self).__init__(*args, **kwargs)
+
+
+class IsAdminUserMixin(UserPassesTestMixin, View):
+    """checks if admin is superuser"""
+
+    def test_func(self):
+        return self.request.user.is_superuser

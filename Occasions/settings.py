@@ -48,7 +48,8 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    'outlets'
+    'outlets',
+    'delivery'
 ]
 
 INSTALLED_APPS = CORE_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -150,3 +151,5 @@ STATICFILES_DIRS = [
 
 SITE_ID = 1
 # SHELL_PLUS = "ipython"
+
+LOGIN_REDIRECT_URL = '/outlets/outlet'

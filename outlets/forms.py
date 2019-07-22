@@ -96,10 +96,12 @@ class OutletStockAdminForm(forms.ModelForm):
 
 
 class OutletsAdminForm(forms.ModelForm):
-
     class Meta:
         model = Outlet
-        fields = ['display_name', 'opening_hours', 'closing_hours', 'country', 'city', 'street', 'longitude', 'latitude',
-                  'time_zone', 'currency', 'delivery_area', 'contact', 'tax_type', 'slug', 'email', 'connected_email']
+        fields = ['display_name', 'opening_hours', 'closing_hours', 'country', 'city', 'street',
+                  'longitude', 'latitude', 'time_zone', 'currency', 'delivery_area', 'contact',
+                  'tax_type', 'slug', 'email', 'connected_email', 'image']
 
+    def clean_image(self):
+        return self.cleaned_data['image']
 

@@ -21,8 +21,9 @@ UNIT_CHOICES = (
 
 
 CURRENCY_CHOICES = (
-    (0.0, _("NRS")),
-    (1.0, _("AED")),
+    (0.0, "NRS"),
+    (1.0, "DHS"),
+    (2.0, "INR")
 )
 
 COUNTRY_CHOICES = (("United Arab Emirates", _('United Arab Emirates')),

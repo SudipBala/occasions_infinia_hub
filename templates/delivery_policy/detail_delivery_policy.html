@@ -1,0 +1,26 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block content %}
+    <tr >
+        <td>{{ object.outlet }}</td>
+        <td>{{ object.radius }}</td>
+        <td>{{ object.delivery_time}}</td>
+        <td>{{ object.price }}</td>
+        <td>{{ object.get_currency_display}}</td>
+    </tr>
+
+    <div class="btn-danger">
+        <a href="{% url 'outlets:delivery:delete' outlet_id=outlet_id pk=object.pk %}">
+            <div>
+                <div>
+                    <span class="fa fa-trash"></span>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="btn-bitbucket">
+        <a href="{% url 'outlets:delivery:update' outlet_id=outlet_id pk=object.pk %}">
+            <button type="button">Update</button>
+        </a>
+    </div>
+{%  endblock %}
