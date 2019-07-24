@@ -314,8 +314,8 @@
                     </a>
                 </li>
                 <li class="treeview">
-                    <a href="#">
-                         <span>Dashboard</span>
+                    <a href="{% url 'logout' %}">
+                         <span>Logout</span>
                     </a>
                 </li>
                 {% if user.is_superuser %}
