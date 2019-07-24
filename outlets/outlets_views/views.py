@@ -3,9 +3,10 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 
-from libs.mixins import IsAdminUserMixin
+from libs.mixins import IsSuperAdminUserMixin
 from outlets.forms import OutletsAdminForm
 from outlets.outlet_models import Outlet
+from outlets.outlets_views.filter import OutletFilter
 
 
 class OutletCreate(CreateView):
@@ -17,9 +18,14 @@ class OutletCreate(CreateView):
         return reverse('outlets:outlet:list')
 
 
-class OutletList(IsAdminUserMixin, ListView):
+class OutletList(IsSuperAdminUserMixin, ListView):
     template_name = "outlets/outlet/list_outlets.html"
     queryset = Outlet.objects.all()
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter'] = OutletFilter(self.request.GET, queryset=self.get_queryset())
+        return context
 
 
 class OutletDetail(DetailView):
@@ -31,8 +37,13 @@ class OutletDetail(DetailView):
         id_ = self.kwargs.get("id")
         return get_object_or_404(Outlet, id=id_)
 
+    def get_context_data(self, **kwargs):
+        context = super(OutletDetail, self).get_context_data(**kwargs)
+        context["outlet_id"] = self.kwargs.get("id")
+        return context
 
-class OutletUpdate(UpdateView):
+
+class OutletUpdate(IsSuperAdminUserMixin, UpdateView):
     template_name = 'outlets/outlet/create_outlet.html'
     form_class = OutletsAdminForm
     queryset = Outlet.objects.all()
@@ -41,26 +52,25 @@ class OutletUpdate(UpdateView):
         id_ = self.kwargs.get("id")
         return get_object_or_404(Outlet, id=id_)
 
-    def form_valid(self, form):
-        print(form.cleaned_data)
-        return super().form_valid(form)
+    # def form_valid(self, form):
+    #     print(form.cleaned_data)
+    #     return super().form_valid(form)
 
     def get_success_url(self):
         return reverse('outlets:outlet:list')
 
 
-class OutletDelete(DeleteView):
+class OutletDelete(IsSuperAdminUserMixin, DeleteView):
     model = Outlet
     queryset = Outlet.objects.all()
-
-    def get(self, request, *args, **kwargs):
-        return self.delete(request, *args, **kwargs)
 
     def get_success_url(self):
         messages.success(self.request, "{message}".format(
             message="The outlet has been deleted"
         ))
         return reverse('outlets:outlet:list')
+
+
 
 
 
