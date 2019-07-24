@@ -1,9 +1,10 @@
 from django import forms
 from django.core.exceptions import ValidationError
-
+from Occasions.settings import LEAFLET_CONFIG
 from libs.mixins import SetOutletInFormMixin
 from outlets.outlet_models import Outlet
 from outlets.stock_models import OutletStock, OutletItem
+from django.contrib.gis.forms import OSMWidget, PointField, ModelForm as MF
 
 
 class OutletForm(forms.ModelForm):
@@ -14,10 +15,9 @@ class OutletForm(forms.ModelForm):
 
 
 class OutletItemAdminForm(SetOutletInFormMixin, forms.ModelForm):
-
     class Meta:
         model = OutletItem
-        fields = ['type1', 'type2',  'display_name', 'quantity', 'unit', 'image']
+        fields = ['type1', 'type2', 'display_name', 'quantity', 'unit', 'image']
 
     def __init__(self, *args, **kwargs):
         super(OutletItemAdminForm, self).__init__(*args, **kwargs)
@@ -95,13 +95,22 @@ class OutletStockAdminForm(forms.ModelForm):
         return super(OutletStockAdminForm, self).save()
 
 
-class OutletsAdminForm(forms.ModelForm):
+class OutletsAdminForm(MF):
     class Meta:
         model = Outlet
         fields = ['display_name', 'opening_hours', 'closing_hours', 'country', 'city', 'street',
-                  'longitude', 'latitude', 'time_zone', 'currency', 'delivery_area', 'contact',
-                  'tax_type', 'slug', 'email', 'connected_email', 'image']
+                  'longitude', 'latitude', 'location', 'time_zone', 'delivery_area', 'contact',
+                  'slug', 'email', 'connected_email', 'image']
+        widgets = {
+            'location': OSMWidget(
+                attrs={
+                    'map_width': '100%',
+                    'map_height': 500,
+                    'default_lat': 27.7172,
+                    'default_lon': 85.3240,
+                    'default_zoom': 16
+
+                })}
 
     def clean_image(self):
         return self.cleaned_data['image']
-
