@@ -52,7 +52,7 @@ class SetOutletInFormMixin(object):
         super(SetOutletInFormMixin, self).__init__(*args, **kwargs)
 
 
-class IsAdminUserMixin(UserPassesTestMixin, View):
+class IsSuperAdminUserMixin(UserPassesTestMixin, View):
     """checks if admin is superuser"""
 
     def test_func(self):

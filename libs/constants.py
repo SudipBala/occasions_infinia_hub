@@ -21,14 +21,14 @@ UNIT_CHOICES = (
 
 
 CURRENCY_CHOICES = (
-    (0.0, "NRS"),
-    (1.0, "DHS"),
-    (2.0, "INR")
+    (0.0, "DHS"),
+    (1.0, "INR")
 )
 
 COUNTRY_CHOICES = (("United Arab Emirates", _('United Arab Emirates')),
                    ("India", _('India'))
                    )
+TAX_TYPES = (("TRN", "TRN"), ("GST", "GST"))
 
 VAT_CHOICES = {
     "India": 0.135,
