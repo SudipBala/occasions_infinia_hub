@@ -1,14 +1,16 @@
-{% extends 'index.html' %}
+{% extends 'outlet_index.html' %}
 {% load static %}
 {% block content %}
-    <tr>
-        <td>{{ object.slug }}</td>
-        <td>{{ object.display_name }}</td>
-        <td>{{ object.street }}{{ object.city }} {{ object.country }}</td>
-        <td>{{ object.contact }}</td>
-        <td>{{ object.email }} </td>
-    </tr>
-
+    <ul>
+        <li>{{ object.slug }}</li>
+        <li>{{ object.display_name }}</li>
+        <li>{{ object.street }},{{ object.city }} ,{{ object.country }}</li>
+        <li>{{ object.tax_type }}</li>
+        <li>{{ object.currency }}</li>
+        <li>{{ object.contact }}</li>
+        <li>{{ object.email }} </li>
+    </ul>
+    {% if user.is_superuser %}
     <div class="btn-danger">
         <a href="{% url 'outlets:outlet:delete' pk=object.id %}">
             <button type="button">Delete</button>
@@ -19,4 +21,5 @@
             <button type="button">Update</button>
         </a>
     </div>
+    {% endif %}
 {% endblock %}
