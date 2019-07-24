@@ -20,6 +20,12 @@
         <div class="row">
             <div class="col-xs-12">
                 <div class="box">
+                    <div class="container">
+                        <form method="get">
+                        {{ filter.form }}
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </form>
+                    </div>
                     <div class="box-header">
                         <h3 class="box-title">Outlets</h3>
                     </div>
@@ -30,13 +36,14 @@
                             <tr>
                                 <th>Slug</th>
                                 <th>Display Name</th>
+                                <th>Location</th>
                                 <th>Street</th>
                                 <th>Contact</th>
                                 <th>Email</th>
                             </tr>
                             </thead>
                             <tbody>
-                            {% for object in object_list %}
+                            {% for object in filter.qs %}
                                 <tr>
                                     <td>{{ object.slug }}</td>
                                     <td>
@@ -44,7 +51,8 @@
                                             {{ object.display_name }}
                                         </a>
                                     </td>
-                                    <td>{{ object.street }}{{ object.city }} {{ object.country }}</td>
+                                    <td>{{object.location}}</td>
+                                    <td>{{ object.street }}, {{ object.city }}, {{ object.country }}</td>
                                     <td>{{ object.contact }}</td>
                                     <td>{{ object.email }} </td>
                                 </tr>
@@ -53,6 +61,7 @@
                             </tbody>
 
                         </table>
+
                     </div>
                     <!-- /.box-body -->
                 </div>
