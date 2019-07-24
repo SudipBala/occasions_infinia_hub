@@ -1,11 +1,13 @@
 import datetime
 
 from django.core import validators
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.contrib.gis.db.models import PointField
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from libs.constants import CURRENCY_CHOICES, area_choices, COUNTRY_CHOICES
+from libs.constants import CURRENCY_CHOICES, area_choices, COUNTRY_CHOICES, TAX_TYPES
 from multiselectfield import MultiSelectField
 
 from libs.db_func import OUTLET_IMAGE_PATH, update_file_path
@@ -32,21 +34,24 @@ class Outlet(CustomModel):
     closing_hours = models.TimeField(_("Closing Time"), default=datetime.time(16, 0), help_text=_("e.g. 18:00:00"),
                                      blank=True)
 
-    country = models.CharField("Country", max_length=100, default="UAE", choices=COUNTRY_CHOICES)
+    country = models.CharField("Country", max_length=100, choices=COUNTRY_CHOICES)
     city = models.CharField("City", max_length=100, blank=False, help_text="Province/State/Region")
     street = models.CharField("Street Name", max_length=100, blank=False)
-    longitude = models.FloatField("Outlet Longitude", default=0.0, blank=False, help_text="Longitude")
-    latitude = models.FloatField("Outlet Latitude", default=0.0, blank=False, help_text="Latitude")
-
-    time_zone = models.CharField("Outlet Timezone", max_length=100, )
-
+    latitude = models.FloatField("Outlet Latitude", default=0.0, blank=False, help_text="Latitude",
+                                 validators=[MinValueValidator(-90.0), MaxValueValidator(90.0)])
+    longitude = models.FloatField("Outlet Longitude", default=0.0, blank=False, help_text="Longitude",
+                                  validators=[MinValueValidator(-180.0),
+                                              MaxValueValidator(180.0)]
+                                  )
+    location = PointField()
+    time_zone = models.CharField("Outlet Timezone", max_length=100)
     currency = models.FloatField("Currency", default=1, choices=CURRENCY_CHOICES, help_text="Choose Currency")
     delivery_area = MultiSelectField("Delivery Areas", choices=area_choices, blank=True,
                                      null=True, help_text="Approximately choose various delivery areas")
     contact = models.CharField(_("Outlet Contact Phone No."), max_length=50, blank=False,
                                help_text=_("example : +977 01 6643ABC, +977 01 6643XYZ"))
 
-    tax_type = models.CharField(choices=(("GST", "GST"), ("TRN", "TRN")), max_length=3)
+    tax_type = models.CharField("Tax Type", choices=TAX_TYPES, max_length=3, null=False)
     thumbnail = models.ImageField("Thumbnail", upload_to="photos/thumbnails/outlets/", max_length=500, default="",
                                   blank=True)
     slug = models.SlugField("Short Display Name", null=True, blank=False, max_length=25,
@@ -79,6 +84,19 @@ class Outlet(CustomModel):
 
     def __str__(self):
         return "%s (%s,%s)" % (self.display_name, self.city, self.country)
+
+    def save(self, *args, **kwargs):
+        super(Outlet, self).save(*args, **kwargs)
+        if self.country == COUNTRY_CHOICES[0][1]:
+            self.currency = CURRENCY_CHOICES[0][0]
+            self.tax_type = TAX_TYPES[0][0]
+            self.save()
+        if self.country == COUNTRY_CHOICES[1][1]:
+            self.currency = CURRENCY_CHOICES[1][0]
+            self.tax_type = TAX_TYPES[1][0]
+            self.save()
+
+
 
 
 
