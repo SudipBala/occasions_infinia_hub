@@ -7,7 +7,7 @@ from libs.models import CustomModel
 
 class DeliveryPolicy(CustomModel):
     outlet = models.ForeignKey("outlets.Outlet", verbose_name="Outlet", on_delete=models.CASCADE)
-    price = models.FloatField("Shipping Price", help_text="tentative price", default=0,
+    price = models.FloatField("Delivery Price", help_text="tentative price", default=0,
                               validators=
                               [MinValueValidator(0, "below minimum price")])
     currency = models.FloatField("Currency", choices=CURRENCY_CHOICES, default=0, max_length=5)
