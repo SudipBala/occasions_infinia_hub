@@ -19,11 +19,16 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_view
 
+from delivery.views import SuperAdminListDelivery
+from outlets.stock_views.views import SuperAdminListStock
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('outlets/', include('outlets.urls', namespace="outlets")),
     path('login/', auth_view.LoginView.as_view(), name='login'),
-    path('logout/', auth_view.LogoutView.as_view(), name='logout')
+    path('logout/', auth_view.LogoutView.as_view(), name='logout'),
+    path('stocks/', SuperAdminListStock.as_view(), name='admin_stock'),
+    path('delivery/', SuperAdminListDelivery.as_view(), name="admin_delivery")
 ] +\
               static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
               static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
