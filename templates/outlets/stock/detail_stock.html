@@ -1,4 +1,4 @@
-{% extends 'index.html' %}
+{% extends 'outlet_index.html' %}
 {% load static %}
 {% block content %}
     <tr >
@@ -13,14 +13,19 @@
         <td>{{ object.price }}</td>
         <td>{{ object.available }}</td>
     </tr>
-
     <div class="btn-danger">
         <a href="{% url 'outlets:stocks:delete' outlet_id=outlet_id pk=object.pk %}">
             <div>
                 <div>
                     <span class="fa fa-trash"></span>
+                    <button type="button">Delete</button>
                 </div>
             </div>
+        </a>
+    </div>
+    <div class="btn-bitbucket">
+        <a href="{% url 'outlets:stocks:update' outlet_id=outlet_id pk=object.pk %}">
+            <button type="button">Update</button>
         </a>
     </div>
 {%  endblock %}
