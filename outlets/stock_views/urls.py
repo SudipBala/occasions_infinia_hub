@@ -10,6 +10,6 @@ urlpatterns = [
     path('create/', AddStock.as_view(), name="create"),
     path('add-item/', AddItem.as_view(), name="add_item"),
     path('<int:pk>/', DetailStock.as_view(), name="detail"),
-    path('<int:pk>/edit/', EditStock.as_view(), name="edit"),
+    path('<int:pk>/update/', EditStock.as_view(), name="update"),
     path('<int:pk>/delete/', DeleteStock.as_view(), name="delete"),
 ]

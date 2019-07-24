@@ -6,7 +6,8 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 
-from libs.mixins import OutletContextForTemplatesMixin, OutletKwargForFormMixin, OutletPermissionCheckMixin
+from libs.mixins import OutletContextForTemplatesMixin, OutletKwargForFormMixin, OutletPermissionCheckMixin, \
+    IsSuperAdminUserMixin
 from outlets.forms import OutletStockAdminForm, OutletItemAdminForm
 
 from outlets.stock_models import OutletStock, OutletItem
@@ -93,7 +94,7 @@ class EditStock(OutletPermissionCheckMixin, OutletKwargForFormMixin, OutletConte
         return context
 
 
-class DeleteStock(OutletPermissionCheckMixin, OutletContextForTemplatesMixin, DeleteView):
+class DeleteStock(OutletPermissionCheckMixin, OutletContextForTemplatesMixin, IsSuperAdminUserMixin, DeleteView):
     model = OutletStock
     queryset = OutletStock.objects.all()
 
@@ -108,4 +109,14 @@ class DeleteStock(OutletPermissionCheckMixin, OutletContextForTemplatesMixin, De
                              name=self.object
                          ))
         return reverse('outlets:stocks:list', kwargs={'outlet_id': self.outlet.id})
+
+
+class SuperAdminListStock(IsSuperAdminUserMixin, ListView):
+    model = OutletStock
+    queryset = OutletStock.objects.all()
+    template_name = "outlets/stock/admin_stock_list.html"
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(SuperAdminListStock, self).get_context_data()
+        return context
 
