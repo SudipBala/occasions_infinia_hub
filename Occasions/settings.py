@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
@@ -26,7 +25,6 @@ SECRET_KEY = 'cfkp1d!u)1mj-nt4#gy!&v$8j@hpe^)h6$!dhm53%)=l@$#d!s'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -39,12 +37,15 @@ CORE_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.postgres',
+    'django.contrib.gis'
 ]
 
 THIRD_PARTY_APPS = [
     'multiselectfield',
     'django_extensions',
     'easy_thumbnails',
+    'leaflet',
+    'django_filters'
 ]
 
 LOCAL_APPS = [
@@ -53,7 +54,6 @@ LOCAL_APPS = [
 ]
 
 INSTALLED_APPS = CORE_APPS + THIRD_PARTY_APPS + LOCAL_APPS
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -85,13 +85,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Occasions.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'occasion',
         'USER': 'infinia_occasion',
         'PASSWORD': 'adminadminadmin',
@@ -99,7 +98,6 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -119,7 +117,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
@@ -133,10 +130,10 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
-STATIC_URL = '/static/'
+STATIC_URL = '/static' \
+             '/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
@@ -153,3 +150,16 @@ SITE_ID = 1
 # SHELL_PLUS = "ipython"
 
 LOGIN_REDIRECT_URL = '/outlets/outlet'
+
+LEAFLET_CONFIG = {
+    'map_height': '500px',
+    'map_width': '100%',
+    'DEFAULT_CENTER': (25.0489847,55.1318385),
+    'DEFAULT_ZOOM': 17,
+    'MAX_ZOOM': 20,
+    'MIN_ZOOM': 5,
+    'SCALE': 'both',
+    'ATTRIBUTION_PREFIX': 'Occasions Bakery and Cafe',
+    'display_raw': 'true',
+    'map_srid': 4326
+}
