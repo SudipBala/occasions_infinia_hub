@@ -8,12 +8,12 @@
             Delivery Policy
             <small>Delivery Policy List</small>
         </h1>
-         <div class="container">
-                        <form method="get">
-                        {{ filter.form }}
-                            <button type="submit" class="btn btn-primary">Search</button>
-                        </form>
-                    </div>
+        <div class="container">
+            <form method="get">
+                {{ filter.form }}
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
         <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i>Home</a></li>
             <li><a href="#">Delivery Policy</a></li>
@@ -42,10 +42,11 @@
                             </tr>
                             </thead>
                             <tbody>
-                                {% for item in filter.qs %}
+                            {% for item in filter.qs %}
                                 <tr>
-                                    <td><a href="{% url 'outlets:delivery:detail' outlet_id=item.outlet.id pk=item.id %}">
-                                        {{ item.outlet }}</a></td>
+                                    <td>
+                                        <a href="{% url 'outlets:delivery:detail' outlet_id=item.outlet.id pk=item.id %}">
+                                            {{ item.outlet }}</a></td>
                                     <td>{{ item.radius }}</td>
                                     <td>{{ item.delivery_time }}</td>
                                     <td>{{ item.price }}</td>
