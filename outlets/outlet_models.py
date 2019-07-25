@@ -86,15 +86,13 @@ class Outlet(CustomModel):
         return "%s (%s,%s)" % (self.display_name, self.city, self.country)
 
     def save(self, *args, **kwargs):
-        super(Outlet, self).save(*args, **kwargs)
         if self.country == COUNTRY_CHOICES[0][1]:
             self.currency = CURRENCY_CHOICES[0][0]
             self.tax_type = TAX_TYPES[0][0]
-            self.save()
         if self.country == COUNTRY_CHOICES[1][1]:
             self.currency = CURRENCY_CHOICES[1][0]
             self.tax_type = TAX_TYPES[1][0]
-            self.save()
+        super(Outlet, self).save(*args, **kwargs)
 
 
 
