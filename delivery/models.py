@@ -7,6 +7,9 @@ from libs.models import CustomModel
 
 class DeliveryPolicy(CustomModel):
     outlet = models.ForeignKey("outlets.Outlet", verbose_name="Outlet", on_delete=models.CASCADE)
+    radius = models.FloatField("Radius (in km)",unique=True, validators=[
+        MinValueValidator(0, "distance is below zero.")
+    ])
     price = models.FloatField("Delivery Price", help_text="tentative price", default=0,
                               validators=
                               [MinValueValidator(0, "below minimum price")])
@@ -17,9 +20,6 @@ class DeliveryPolicy(CustomModel):
                                           MinValueValidator(0, "Value should be over zero."),
                                       ]
                                       )
-    radius = models.FloatField("Radius (in km)", validators=[
-        MinValueValidator(0, "distance is below zero.")
-    ])
 
     def __str__(self):
         return f"Delivery Policy {str(self.id)}"
