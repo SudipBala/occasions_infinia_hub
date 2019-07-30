@@ -45,6 +45,7 @@ THIRD_PARTY_APPS = [
     'multiselectfield',
     'django_extensions',
     'easy_thumbnails',
+    'django_filters',
 ]
 
 LOCAL_APPS = [
