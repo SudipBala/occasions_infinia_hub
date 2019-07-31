@@ -120,13 +120,13 @@
             </div><!-- /.col -->
         </div><!-- /.row -->
         <!-- this row will not appear when printing -->
-{#        <div class="row no-print">#}
-{#            <div class="col-xs-12">#}
-{#                <button class="btn btn-default" onclick="window.print();"><i class="fa fa-print"></i> Print</button>#}
-{#                <a href="{% url 'business:orders:invoices:pdf' store_id=store_id pk=object.pk %}">#}
-{#                    <button class="btn btn-primary pull-right" style="margin-right: 5px;"><i class="fa fa-download"></i> Generate PDF</button>#}
-{#                </a>#}
-{#            </div>#}
-{#        </div>#}
+        <div class="row no-print">
+            <div class="col-xs-12">
+                <button class="btn btn-default"><i class="fa fa-print"></i> Print</button>
+                <a href="{% url 'outlets:orders:invoice:pdf' outlet_id=outlet_id pk=object.pk %}">
+                    <button class="btn btn-primary pull-right" style="margin-right: 5px;"><i class="fa fa-download"></i> Generate PDF</button>
+                </a>
+            </div>
+        </div>
     </section>
 {% endblock %}
