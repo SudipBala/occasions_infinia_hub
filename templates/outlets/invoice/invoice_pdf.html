@@ -1,0 +1,149 @@
+{% load i18n %}{% autoescape off %}
+    <style type="text/css">
+
+        body {
+            font-family: "Helvetica", "sans-serif";
+            font-size: small;
+        }
+            .invoice-data {
+                border-top: 1px solid black;
+                border-bottom: solid black;
+            }
+        .invoice-data th{
+            text-align: left;
+        }
+
+            .invoice-data td{
+                text-align: left;
+
+            }
+
+        .pull-right{
+            text-align: right;
+        }
+
+        thead tr {
+            background-color: black;
+            color: white;
+        }
+            td {
+                padding-top: 5px;
+                padding-bottom: 5px;
+            }
+        {#</style>#}
+    </style>
+{% blocktrans %}Order Details.{% endblocktrans %}
+<br>
+<br>
+<h2>
+    Invoice# {{ object.invoice_number }}
+    <small class="pull-right">Date: {% now "jS F Y" %}</small>
+</h2>
+
+<table>
+<tr>
+    <td>
+        Store Details<br>
+        <strong>{{ object.associated_outlet.display_name }}</strong><br>
+        {{ object.associated_outlet.street }}<br>
+        {{ object.associated_outlet.city }}, {{ object.associated_outlet.country }}<br>
+        Phone: {{ object.associated_outlet.contact }}<br>
+        Email: {{ object.associated_outlet.email }}
+    </td>
+
+    <td>
+        <b>Invoice# {{ object.invoice_number }}</b><br>
+        <br>
+        <b>Order ID:</b> {{ object.id }}<br>
+        <b>Payment Due:</b> {{ object.trackingdetails.get_due_date|default:"Not Confirmed" }} <br>
+        {% if object.trackingdetails.get_due_date %}
+            <b>Tracking# :</b> {{ object.trackingdetails.tracking_number }}<br>
+        {% endif %}
+    </td>
+</tr></table>
+<br>
+<table class="invoice-data" style="table-layout:fixed; width: 100%;">
+    <thead>
+        <tr style="padding-top: 1px">
+            <th style="width: 32%">Product</th>
+            <th style="width: 10%">Qty</th>
+            <th style="width: 22%">UOM</th>
+            <th style="width: 12%">Price</th>
+            <th style="width: 12%">Discount</th>
+            <th style="width: 12%">Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for il in object.trackingdetails.get_itemlines %}
+            <tr>
+                <td style="word-wrap: break-word;">{{ il.stocked_item.item.display_name }}</td>
+                <td style="word-wrap: break-word;">{{ il.quantity }}</td>
+                <td style="word-wrap: break-word;">{{ il.stocked_item.item.quantity }} {{ il.stocked_item.item.unit }}</td>
+                <td style="word-wrap: break-word;">{{ il.stocked_item.price }}</td>
+                <td style="word-wrap: break-word;">{{ il.itemline_data.discount_amount }}</td>
+                <td style="word-wrap: break-word;">{{ il.itemline_data.net_price }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<br>
+<br>
+<table>
+    <tr>
+        <td style="width: 70%;">
+            <div style="padding-right: 15px; padding-left: 15px;">
+            <p style="font-size:21px">Payment Methods:</p>
+            <p style="color:#bbb; font-size: 17px;">
+                Cash on Delivery
+            </p>
+                 <p style="color:#bbb; font-size: 17px;">
+                Card Payment
+            </p>
+            </div>
+        </td>
+        <td>
+            <div style="padding-right: 15px; padding-left: 15px;">
+                <p style="font-size:21px">Amount:</p>
+                <table>
+                    <tbody style="text-align: left;">
+                        <tr>
+                            <td style="text-align:left; width:50%">Subtotal:</td>
+                            <td>{{ object.subtotal }}</td>
+                        </tr>
+                        <tr>
+                            <td style="width:50%">Additional Discount:</td>
+                            <td>{{ object.additional_discount }}</td>
+                        </tr>
+                        <tr>
+                            <td>Shipping:</td>
+                            <td>{{ object.get_shipping_cost.price }}</td>
+                        </tr>
+                        <tr>
+                            <td>VAT ({{ object.vat }})</td>
+                            <td>{{ object.get_vat_amount }}</td>
+                        </tr>
+                        <tr>
+                            <td>Amount:</td>
+                            <td>{{ object.get_grand_total_with_shipping_and_vat }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </td>
+    </tr>
+</table>
+<br>
+{% blocktrans %}The Occasions team {% endblocktrans %}
+<br>
+<br>
+<div style="font-size: 12px;">
+    <u>Terms and Conditions</u><br>
+    1. <br>
+    2. <br>
+    3. <br>
+    4. <br>
+    5. <br>
+    6. <br>
+</div>
+
+{% endautoescape %}
