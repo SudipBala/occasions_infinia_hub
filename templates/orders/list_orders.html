@@ -114,7 +114,7 @@
                                     View Order
                                 </a>
                             </p>
-                            <a href="">
+                            <a href="{% url 'outlets:orders:invoice:pdf' outlet_id=outlet_id pk=tracker.order.pk %}">
                                 <p>View PDF</p>
                             </a>
                         </td>
