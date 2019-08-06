@@ -99,7 +99,7 @@ class OutletsAdminForm(MF):
     class Meta:
         model = Outlet
         fields = ['display_name', 'opening_hours', 'closing_hours', 'country', 'city', 'street',
-                  'longitude', 'latitude', 'location', 'time_zone', 'delivery_area', 'contact',
+                  'location', 'time_zone', 'delivery_area', 'contact',
                   'slug', 'email', 'connected_email', 'image']
         widgets = {
             'location': OSMWidget(
