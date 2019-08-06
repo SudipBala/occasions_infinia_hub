@@ -1,12 +1,10 @@
 from django.contrib import messages
 from django.urls import reverse
-from django.views.generic import CreateView, DetailView, DeleteView, UpdateView, ListView
+from django.views.generic import CreateView, ListView, DetailView, DeleteView, UpdateView
 
-from delivery.filter import DeliveryFilter
 from delivery.forms import DeliveryPolicyForm
 from delivery.models import DeliveryPolicy
-from libs.mixins import OutletPermissionCheckMixin, OutletContextForTemplatesMixin, OutletKwargForFormMixin, \
-    IsSuperAdminUserMixin
+from libs.mixins import OutletPermissionCheckMixin, OutletContextForTemplatesMixin, OutletKwargForFormMixin
 
 
 class CreateDeliveryPolicy(OutletPermissionCheckMixin, OutletContextForTemplatesMixin,
@@ -76,15 +74,4 @@ class EditDeliveryPolicy(OutletPermissionCheckMixin, OutletKwargForFormMixin, Ou
     def get_context_data(self, **kwargs):
         context = super(EditDeliveryPolicy, self).get_context_data(**kwargs)
         context['operation'] = 'Edit'
-        return context
-
-
-class SuperAdminListDelivery(IsSuperAdminUserMixin, ListView):
-    model = DeliveryPolicy
-    queryset = DeliveryPolicy.objects.all()
-    template_name = "delivery_policy/admin_delivery_list.html"
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['filter'] = DeliveryFilter(self.request.GET, queryset=self.get_queryset())
         return context

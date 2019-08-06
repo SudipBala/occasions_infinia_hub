@@ -11,4 +11,9 @@ PyYAML==5.1.1
 django-leaflet==0.24.0
 django-filter==2.2.0
 djangorestframework==3.10.1
-
+django-jsonfield==1.2.0
+django-jsonfield-compat==0.4.4
+django-oauth-toolkit==1.2.0
+django-rest-framework-social-oauth2==1.1.0
+oauthlib==3.0.2
+satchless==1.2.0

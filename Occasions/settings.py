@@ -37,7 +37,8 @@ CORE_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.postgres',
-    'django.contrib.gis'
+    'django.contrib.gis',
+    'social_app'
 ]
 
 THIRD_PARTY_APPS = [
@@ -46,7 +47,11 @@ THIRD_PARTY_APPS = [
     'easy_thumbnails',
     'leaflet',
     'django_filters',
-    'rest_framework'
+    'rest_framework',
+    'corsheaders',
+    'oauth2_provider',
+    'rest_framework_social_oauth2',
+    'actstream',
 ]
 
 LOCAL_APPS = [
@@ -57,6 +62,7 @@ LOCAL_APPS = [
 INSTALLED_APPS = CORE_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -79,6 +85,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_app.context_processors.site',
             ],
         },
     },
@@ -170,4 +177,32 @@ LEAFLET_CONFIG = {
     'map_srid': 4326
 }
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = (
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+)
+
+# CORS_ALLOW_HEADERS = defaults.default_headers + (
+#     "x_csrftoken",
+# )
+
+ACTSTREAM_SETTINGS = {
+    'MANAGER': 'actstream.managers.ActionManager',
+    'FETCH_RELATIONS': True,
+    'USE_JSONFIELD': True,  # lets add custom data to your actions
+    # http://django-activity-stream.readthedocs.io/en/latest/data.html#custom-data
+}
+AUTH_USER_MODEL = 'social_app.OccasionUser'
+
+SITE_ID = 1
+SITE_URL = "0.0.0.0:8000"
+SITE_NAME = "Occasions"

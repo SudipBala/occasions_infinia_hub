@@ -43,7 +43,7 @@ class Outlet(CustomModel):
                                   validators=[MinValueValidator(-180.0),
                                               MaxValueValidator(180.0)]
                                   )
-    location = PointField()
+    location = PointField(blank=True, null=True)
     time_zone = models.CharField("Outlet Timezone", max_length=100)
     currency = models.FloatField("Currency", default=1, choices=CURRENCY_CHOICES, help_text="Choose Currency")
     delivery_area = MultiSelectField("Delivery Areas", choices=area_choices, blank=True,

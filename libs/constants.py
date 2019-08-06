@@ -38,10 +38,9 @@ VAT_CHOICES = {
 
 STATUS_CHOICES = ((0, _("Pending")),
                   (1, _("Confirmed")),
-                  (2, _("Item collected")),
-                  (3, _("Item processed")),
-                  (4, _("Enroute")),
-                  (5, _("Delivered"))
+                  (2, _("Item processed")),
+                  (3, _("Enroute")),
+                  (4, _("Delivered"))
                   )
 
 KTM = 'Kathmandu'

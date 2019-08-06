@@ -42,7 +42,9 @@ urlpatterns = [
     path('logout/', auth_view.LogoutView.as_view(), name='logout'),
     path('stocks/', SuperAdminListStock.as_view(), name='admin_stock'),
     path('delivery/', SuperAdminListDelivery.as_view(), name="admin_delivery"),
-    path('api/auth/', include('rest_framework.urls'))
+    path('api/auth/', include('rest_framework.urls')),
+    path('oauth2/', include('oauth2_provider.urls', namespace='oauth2')),
+    path('activity/', include(('actstream.urls', 'actstream'), namespace="activity")),
 ] +\
               static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
               static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -1,0 +1,154 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block content %}
+    <div class="box">
+        <div class="box-info" style="position: relative; left: 0px; top: 0px;">
+            <div class="box-body">
+                <form action="" method="get" id="search-form">
+                    <div class="form-group">
+    {#                            remove this dont#}
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <div class="col-md-3 col-sm-3">
+                                <label class="col-md-3 col-sm-3 control-label">Order: </label>
+                                <div class="col-md-9 col-sm-9">
+                                    <input class="form-control" id="id_order" name="order"/>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3">
+                                <label class="col-md-3 col-sm-3 control-label">Status: </label>
+                                <div class="col-md-9 col-sm-9">
+                                    <select class="form-control" id="id_status" name="status">
+                                        <option value="" selected="selected">---------</option>
+                                        {% for c in status_choices %}
+                                            <option value={{ c.0 }}>{{ c.1 }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3">
+                            <label class="col-md-3 col-sm-3">Shipped to: </label>
+                                <div class="col-md-9 col-sm-9">
+                                    <input class="form-control" id="id_customer" name="customer"/>
+                                </div>
+                            </div>
+                        <div class="col-md-3 col-sm-3">
+                            <label class="col-md-3 col-sm-3">Order Placed Date: </label>
+                                <div class="col-md-9 col-sm-9">
+                                    <input class="form-control" id="id_order_placed" name="order_placed"/>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="submit" class="btn btn-primary" id="search" value="Search"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="box-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th style="width: 140px">Invoice#</th>
+                        <th style="width: 25%">Customer Information</th>
+                        <th>Order#</th>
+                        <th>Order Amount</th>
+                        <th style="width: 140px">Tracking#</th>
+                        <th>Status</th>
+                        <th>Order Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tracker in object_list %}
+                    <tr>
+                        <td>
+                            {{ tracker.order.invoice_number }}
+                        </td>
+                        <td>
+                            <div class="invoice-col">
+                                <address>
+                                    <strong>{{ tracker.shipped_to|title }}</strong><br>
+{#                                    {% if tracker.shipped_to.type == 'apartment' %}#}
+{#                                    ap#{{ tracker.shipped_to.apartment|title }}, ro#{{ tracker.shipped_to.room|title }}, bd#{{ tracker.shipped_to.building|title }} <br>#}
+{#                                    {% elif tracker.shipped_to.type == 'villa' %}#}
+{#                                    Building: {{ tracker.shipped_to.building|title }} <br>#}
+{#                                    {% else %}#}
+{#                                    Company: {{ tracker.shipped_to.company|title }} <br>#}
+{#                                    {% endif %}#}
+{#                                    {{ tracker.shipped_to.street|title }}, {{ tracker.shipped_to.area|title }} <br>#}
+{#                                    {{ tracker.shipped_to.city|title }}, {{ tracker.shipped_to.country|title }} <br>#}
+{#                                    Near {{ tracker.shipped_to.nearest_landmark|title }}<br>#}
+{#                                    Phone: {{ tracker.shipped_to.mobile_number|title }}<br>#}
+{#                                    Email: {{ tracker.shipped_to.alternative_email|title }}#}
+                                    Customer
+                                    Info
+                                    here
+                                </address>
+                            </div>
+                        </td>
+                        <td>
+                            {{ tracker.order.id }}
+                        </td>
+                        <td>
+                            {{ tracker.order.grand_total }}
+                        </td>
+                        <td>
+                            {{ tracker.tracking_number }}
+                            {% if tracker.get_status_display != "Delivered" %}
+                                <a class="btn-sm" href="#">
+                                    <i class="fa fa-edit"></i> Edit
+                                </a>
+                            {% endif %}
+                        </td>
+                        </td>
+                        <td>
+                            <b>{{ tracker.get_status }}</b>
+                        </td>
+                        <td>
+                            {{ tracker.order_placed }}<br>
+                            <u><small>DUE:<strong>{{ tracker.delivery_date }}</strong></small></u>
+                        </td>
+                        <td>
+                            <p>
+                                <a href="{% url 'outlets:orders:invoice:detail' outlet_id=outlet_id pk=tracker.order.pk %}">
+                                    View Order
+                                </a>
+                            </p>
+                            <a href="{% url 'outlets:orders:invoice:pdf' outlet_id=outlet_id pk=tracker.order.pk %}">
+                                <p>View PDF</p>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div><!-- /.box-body -->
+        {% if is_paginated %}
+            <div class="pagination">
+                <span class="page-links">
+                {% if page_obj.has_previous %}
+                    <a type="button" class="btn btn-success" href="{% url 'outlets:orders:list' outlet_id=outlet.id %}?{{ request.GET.urlencode }}&page={{ page_obj.previous_page_number }}">
+                        <span><< Previous</span>
+                    </a>
+                {% else %}
+                    <span class="btn btn-default">
+                        <span><< Previous</span>
+                    </span>
+                {% endif %}
+                <span class="page-current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+                {% if page_obj.has_next %}
+                    <a class="btn btn-success" href="{% url 'outlets:orders:list' store_id=store.id %}?{{ request.GET.urlencode }}&page={{ page_obj.next_page_number }}">
+                        <span>Next >></span>
+                    </a>
+                {% else %}
+                    <span class="btn btn-default">
+                        <span>Next >></span>
+                    </span>
+                {% endif %}
+            </span>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}
