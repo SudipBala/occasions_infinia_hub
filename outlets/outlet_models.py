@@ -92,6 +92,8 @@ class Outlet(CustomModel):
         if self.country == COUNTRY_CHOICES[1][1]:
             self.currency = CURRENCY_CHOICES[1][0]
             self.tax_type = TAX_TYPES[1][0]
+        self.longitude = self.location.x
+        self.latitude = self.location.y
         super(Outlet, self).save(*args, **kwargs)
 
 
