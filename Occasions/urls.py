@@ -16,19 +16,33 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path, include
+from django.contrib.auth.models import User
+from django.urls import path , include
 from django.contrib.auth import views as auth_view
 
+from api.outlets_api.views import OutletViewSet, BannerImageViewSet
 from delivery.views import SuperAdminListDelivery
 from outlets.stock_views.views import SuperAdminListStock
+from rest_framework import serializers, viewsets, routers
+
+
+# Routers provide an easy way of automatically determining the URL conf.
+router = routers.DefaultRouter()
+router.register('v1/outlet', OutletViewSet)
+router.register('v1/banner', BannerImageViewSet)
+
 
 urlpatterns = [
+    path('', include(router.urls)),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('api/', include(router.urls)),
     path('admin/', admin.site.urls),
     path('outlets/', include('outlets.urls', namespace="outlets")),
     path('login/', auth_view.LoginView.as_view(), name='login'),
     path('logout/', auth_view.LogoutView.as_view(), name='logout'),
     path('stocks/', SuperAdminListStock.as_view(), name='admin_stock'),
-    path('delivery/', SuperAdminListDelivery.as_view(), name="admin_delivery")
+    path('delivery/', SuperAdminListDelivery.as_view(), name="admin_delivery"),
+    path('api/auth/', include('rest_framework.urls'))
 ] +\
               static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
               static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
