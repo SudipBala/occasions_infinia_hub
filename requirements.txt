@@ -8,6 +8,9 @@ Pillow==6.0.0
 django-extensions==2.1.7
 easy-thumbnails==2.6
 PyYAML==5.1.1
+django-activity-stream==0.8.0
+django-cors-middleware==1.4.0
+django-easy-pdf==0.1.1
 django-leaflet==0.24.0
 django-filter==2.2.0
 djangorestframework==3.10.1
