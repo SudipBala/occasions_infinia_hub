@@ -8,12 +8,15 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from satchless.item import ClassifyingPartitioner, ItemLine
 
+from delivery.models import OutletOrderDetails, TrackingDetails
 from libs.constants import VAT_CHOICES
 from libs.fields import CustomJsonField
 from libs.utils import get_absolute_media_url
 from outlets.outlet_models import Outlet
 from outlets.stock_models import OutletStock
+from social_app.models import OccasionUser
 
 
 class OutletItemLine(models.Model):
@@ -103,9 +106,9 @@ class OutletItemLine(models.Model):
         super(OutletItemLine, self).save(force_insert, force_update, using, update_fields)
 
 
-class OutletCart(models.Model):
+class OutletCart(models.Model, ItemLine):
     """
-    DADDY CART contains unique store carts(itemlist)
+    DADDY CART contains unique outlet carts(itemlist)
     represents a set of InfiniaLine or other OutletCart objects that has a total price.
 
     obj : adding itemline to cart using other than id.
@@ -114,7 +117,7 @@ class OutletCart(models.Model):
     """
 
     itemline = models.ManyToManyField(OutletItemLine)
-    associated_user = models.IntegerField(blank=True, null=True)
+    associated_user = models.OneToOneField(OccasionUser, blank=True, null=True, on_delete=models.CASCADE)
     checked_out = models.BooleanField(default=False)
     hash = models.CharField(_("Hash Value"), max_length=65, blank=True, null=True,
                             help_text=_("Auto Fill"), unique=True)
@@ -203,6 +206,21 @@ class OutletCart(models.Model):
 #         instance.itemline.add(*filtered_itemlines)
 #
 #     instance.save()
+
+
+class CartSplitter(ClassifyingPartitioner):
+    """
+    Partitions the items in cart into groups based on their stores.
+    """
+
+    def classify(self, itemline):
+        """
+        subject with respect to which cart will be split.
+
+        :type itemline: InfiniaItemLine
+        :return:
+        """
+        return itemline.stocked_item.outlet.id
 
 
 class ItemLineDataList(list):
@@ -295,7 +313,7 @@ class OutletInvoice(models.Model):
     invoice_number = models.CharField("Invoice Number", max_length=16)
     associated_cart = models.ForeignKey(OutletCart, null=True, on_delete=models.SET_NULL)
     associated_outlet = models.ForeignKey(Outlet, null=True, on_delete=models.SET_NULL)
-    itemline_data = models.ManyToManyField(OutletItemLine, blank=True)
+    itemline_data = models.ManyToManyField(ItemLineInvoice, blank=True)
     subtotal = models.FloatField(_("Sub Total"), default=0,
                                  validators=[MinValueValidator(0, "price cant be negative")])
     additional_discount = models.FloatField(_("discount on cart"), default=0,
@@ -370,7 +388,7 @@ class OutletInvoice(models.Model):
 
 class OutletInvoiceDict(dict):
     """
-    Collects Invoices of particular store together.
+    Collects Invoices of particular outlet together.
     """
 
     def __init__(self, **kwargs):
@@ -400,9 +418,9 @@ class OutletInvoiceDict(dict):
         invoice.errors += " ,".join(error)
 
     def check_errors(self, outlet=None, subtotal=0):
-        error = self.check_outlet_minimum_buy(subtotal=subtotal, outlet=outlet)
-        if error:
-            self.errors.append(error)
+        # error = self.check_outlet_minimum_buy(subtotal=subtotal, outlet=outlet)
+        # if False:
+        #     self.errors.append(error)
         if self.raise_exception and self.errors:
             raise ValidationError(", ".join(self.errors))
         if not self.raise_exception and self.errors:
@@ -425,7 +443,7 @@ class CartInvoice(object):
     """
     Class that will be responsible for the creation of the invoices being checked out(in db) or not(in memory).
 
-    itemline -> sub-cart -> store-cart -> cart
+    itemline -> sub-cart -> outlet-cart -> cart
     """
     cart = None
     address_id = 0
@@ -435,8 +453,8 @@ class CartInvoice(object):
 
     def __init__(self, **kwargs):
         self.cart = kwargs.pop('cart')
-        self.address_id = kwargs.pop('address_id', None)
-        self.shipped_to = None
+        self.address_id = kwargs.pop('address_id')
+        self.shipped_to = kwargs.pop('shipped_to')
         self.user = kwargs.pop('user')
         self.checkout = kwargs.pop('checkout', False)
         self.daddy_invoice = []
@@ -446,28 +464,27 @@ class CartInvoice(object):
             raise ValidationError("Associated Cart User Does Not Match Authenticated User.")
         super(CartInvoice, self).__init__()
 
-    #for tracking orders
-    # def track_log(self):
-    #     """
-    #     add the trackers if checked out to the orderDetails logs.
-    #     :return:
-    #     """
-    #     order_details = OutletOrderDetails()
-    #     order_details.save()
-    #
-    #     for outlet_invoices in self.daddy_invoice:
-    #         for i in range(len(outlet_invoices)):
-    #             invoice = outlet_invoices[i]
-    #             shipper = self.shipper_data[str(invoice.associated_outlet.id)][i]
-    #
-    #             tracker = TrackingDetails(order=invoice,
-    #                                       buyer=self.user,
-    #                                       shipped_to=self.shipped_to)
-    #             tracker.save()
-    #             order_details.trackers.add(tracker)
-    #             order_details.save()
-    #
-    #     return order_details.id
+    # for tracking orders
+    def track_log(self):
+        """
+        add the trackers if checked out to the orderDetails logs.
+        :return:
+        """
+        order_details = OutletOrderDetails()
+        order_details.save()
+
+        for outlet_invoices in self.daddy_invoice:
+            for i in range(len(outlet_invoices)):
+                invoice = outlet_invoices[i]
+
+                tracker = TrackingDetails(order=invoice,
+                                          buyer=self.user,
+                                          shipped_to=self.shipped_to)
+                tracker.save()
+                order_details.trackers.add(tracker)
+                order_details.save()
+
+        return order_details.id
 
     def get_itemline_invoice(self, itemline):
         """
@@ -504,16 +521,16 @@ class CartInvoice(object):
         #         raise InstantiationException("Missing Shipping Address.")
         #
         #     category_second = itemlist[0].stocked_item.category_slug_name
-        #     # cost = self.check_deliverability(store, category_second, shipper)
-        #     cost = store.get_shipping_cost(category_second, self.shipped_to, shipper)
+        #     # cost = self.check_deliverability(outlet, category_second, shipper)
+        #     cost = outlet.get_shipping_cost(category_second, self.shipped_to, shipper)
         #
         #     instance.is_deliverable, instance.shipping_cost, instance.shipper = cost[0], cost[1], cost[2]
         #     if not instance.is_deliverable:
         #         category_name = itemlist[0].stocked_item.category_name
         #         error = "{} items from {},{} is not deliverable to your Area. ".format(
         #             ', '.join(category_name).title(),
-        #             store.display_name.title(),
-        #             store.area.title()
+        #             outlet.display_name.title(),
+        #             outlet.area.title()
         #         )
         #         if self.checkout:
         #             # if being checked out, but an item is not deliverable, raise an exception.
@@ -550,7 +567,7 @@ class CartInvoice(object):
     def get_outlet_cart_invoices(self, itemlist):
         """
         collects the independent sub-carts and simply groups them... does no more
-        Currently simply checks for store's minimum buy stuff
+        Currently simply checks for outlet's minimum buy stuff
 
         has its unique shipping address
         :param itemlist: list # of OutletItemLine
@@ -577,23 +594,23 @@ class CartInvoice(object):
 
     def get_cart_invoices(self):
         """
-        collects the independent store-carts and groups them... does no more
+        collects the independent outlet-carts and groups them... does no more
         calculates the grand total with vat
 
         :return: list
         """
         if self.checkout and self.cart.checked_out:
             raise ValidationError({"message": "Cart has already been checked out.", "code": "checked_out"})
-
+        carts = CartSplitter(self.cart.itemline.all())
         grand_total_without_vat = 0
-        for outlet_cart in self.cart:
+        for outlet_cart in carts:
             with transaction.atomic():
                 invoices = self.get_outlet_cart_invoices(outlet_cart)
                 grand_total_without_vat += sum([invoice.get_grand_total_without_vat for invoice in invoices])
                 self.daddy_invoice.append(invoices)
 
         if self.address_id and self.checkout:
-            # self.track_log()
+            self.track_log()
             self.cart.checked_out = True
             self.cart.save()
 

@@ -22,5 +22,7 @@ urlpatterns = [
     path('', include(('outlets.outlets_views.urls', 'outlets'), namespace="outlet")),
     path('<int:outlet_id>/stocks/', include(('outlets.stock_views.urls', 'outlets'), namespace="stocks")),
     path('<int:outlet_id>/delivery/', include(('delivery.deliverypolicy_views.urls', 'delivery'), namespace="delivery")),
-    path('<int:outlet_id>/orders/', include(('delivery.order_views.urls', 'delivery'), namespace="orders"))
+    path('<int:outlet_id>/orders/', include(('delivery.order_views.urls', 'delivery'), namespace="orders")),
+    path('admins/', include(('social_app.urls', 'social_app'), namespace="social_app")),
+
 ]

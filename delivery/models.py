@@ -1,6 +1,5 @@
 import datetime
 
-from django.core.management.utils import get_random_secret_key
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils import timezone
@@ -8,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 from libs.constants import CURRENCY_CHOICES, STATUS_CHOICES
 from libs.models import CustomModel, CustomManager
+from libs.utils import get_random_secret_key
 
 
 class TrackingDetailsManager(CustomManager):
@@ -56,15 +56,15 @@ class TrackingDetails(CustomModel):
     order_placed = models.DateTimeField(_("Order Placed"), help_text=_("when was order placed."), default=timezone.now)
     order = models.OneToOneField('outlets.OutletInvoice', on_delete=models.DO_NOTHING)
 
-    # shipped_to = models.ForeignKey('social_app.ShippingAddress')
-    # buyer = models.ForeignKey('social_app.InfiniaUser', null=True)
-    shipped_to = models.TextField("User Address", null=True, blank=True)
-    buyer = models.TextField("User", null=True, blank=True)
+    shipped_to = models.ForeignKey('social_app.ShippingAddress', on_delete=models.DO_NOTHING, blank=True, null=True)
+    buyer = models.ForeignKey('social_app.OccasionUser', null=True, on_delete=models.DO_NOTHING)
+    # shipped_to = models.TextField("User Address", null=True, blank=True)
+    # buyer = models.("User", null=True, blank=True)
 
     canceled_date = models.DateTimeField("Canceled Date", null=True)
     canceled = models.NullBooleanField("Canceled", default=False)
-    # canceled_by = models.TextField("social_app.InfiniaUser", null=True, related_name="canceled")
-    canceled_by = models.TextField("User", null=True, blank=True)
+    canceled_by = models.OneToOneField("social_app.OccasionUser", null=True, related_name="canceled", on_delete=models.CASCADE)
+    # canceled_by = models.TextField("User", null=True, blank=True)
     cancel_reason = models.TextField("Cancel Reason", null=True, blank=False)
 
     @property
@@ -75,21 +75,21 @@ class TrackingDetails(CustomModel):
         # used in the templates
         itemlines = []
         for il_data in self.order.itemline_data.all():
-            itemlines.append({'stocked_item': il_data.stocked_item,
-                              'quantity': il_data.quantity,
+            itemlines.append({'stocked_item': il_data.itemline.stocked_item,
+                              'quantity': il_data.itemline.quantity,
                               'itemline_data': il_data
                               })
         return itemlines
 
     def reduce_stock(self):
         for itemline_invoice in self.order.itemline_data.all():
-            itemline_invoice.stocked_item.available -= itemline_invoice.quantity
-            itemline_invoice.stocked_item.save()
+            itemline_invoice.itemline.stocked_item.available -= itemline_invoice.itemline.quantity
+            itemline_invoice.itemline.stocked_item.save()
 
     def increment_stock(self):
         for itemline_invoice in self.order.itemline_data.all():
-            itemline_invoice.stocked_item.available += itemline_invoice.quantity
-            itemline_invoice.stocked_item.save()
+            itemline_invoice.itemline.stocked_item.available += itemline_invoice.itemline.quantity
+            itemline_invoice.itemline.stocked_item.save()
 
     def cancel_order(self, canceled_by, reason):
         if self.canceled and self.canceled_date:
@@ -169,3 +169,41 @@ class TrackingDetails(CustomModel):
 
     class Meta:
         ordering = ('order_placed', )
+
+
+class OutletOrderDetails(CustomModel):
+    """
+    order detail will simply collect an entire, multiple tracking details from a particular user
+    """
+    order_number = models.CharField(max_length=15, null=False, unique=True)
+    trackers = models.ManyToManyField(TrackingDetails)
+
+    @property
+    def buyer(self):
+        # take first tracker and return its user.
+        try:
+            return self.trackers.all()[0].buyer
+        except IndexError:
+            return None
+
+    def get_buyer(self):
+        # take first tracker and return its user.
+        try:
+            return self.trackers.all()[0].buyer
+        except IndexError:
+            return None
+
+    def send_mail(self):
+        pass
+        # todo sending to both the client and store
+
+    def __str__(self):
+        # except AttributeError:
+        return str(self.id)
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.order_number = 'O' + get_random_secret_key(10)
+        elif self.id and not self.buyer:
+            raise AttributeError(_("Empty Cart or Null Buyer..."), code="invalid")
+        super(OutletOrderDetails, self).save(*args, **kwargs)

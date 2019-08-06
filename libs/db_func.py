@@ -2,8 +2,13 @@ import os
 import shutil
 from django.conf import settings
 
-STOCK_IMAGE_PATH= 'stocks/'
+STOCK_IMAGE_PATH = 'stocks/'
 OUTLET_IMAGE_PATH = 'outlets/'
+
+THUMBNAIL_PATH = 'thumbnails/'
+
+USER_IMAGE_PATH = 'user/'
+USER_THUMBNAIL_PATH = THUMBNAIL_PATH + 'user/'
 
 
 def update_file_path(relative_path=None):

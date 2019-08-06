@@ -23,7 +23,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('outlets/', include('outlets.urls', namespace="outlets")),
     path('login/', auth_view.LoginView.as_view(), name='login'),
-    path('logout/', auth_view.LogoutView.as_view(), name='logout')
+    path('logout/', auth_view.LogoutView.as_view(), name='logout'),
+    path('oauth2/', include('oauth2_provider.urls', namespace='oauth2')),
+    path('activity/', include(('actstream.urls', 'actstream'), namespace="activity")),
 ] +\
               static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
               static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
