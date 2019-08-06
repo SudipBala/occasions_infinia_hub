@@ -45,7 +45,8 @@ THIRD_PARTY_APPS = [
     'django_extensions',
     'easy_thumbnails',
     'leaflet',
-    'django_filters'
+    'django_filters',
+    'rest_framework'
 ]
 
 LOCAL_APPS = [
@@ -151,10 +152,15 @@ SITE_ID = 1
 
 LOGIN_REDIRECT_URL = '/outlets/outlet'
 
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5
+}
+
 LEAFLET_CONFIG = {
     'map_height': '500px',
     'map_width': '100%',
-    'DEFAULT_CENTER': (25.0489847,55.1318385),
+    'DEFAULT_CENTER': (25.0489847, 55.1318385),
     'DEFAULT_ZOOM': 17,
     'MAX_ZOOM': 20,
     'MIN_ZOOM': 5,
@@ -163,3 +169,5 @@ LEAFLET_CONFIG = {
     'display_raw': 'true',
     'map_srid': 4326
 }
+
+ALLOWED_HOSTS = ['*']
