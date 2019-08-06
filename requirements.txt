@@ -10,4 +10,5 @@ easy-thumbnails==2.6
 PyYAML==5.1.1
 django-leaflet==0.24.0
 django-filter==2.2.0
+djangorestframework==3.10.1
 
