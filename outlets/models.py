@@ -1,18 +1,18 @@
 import json
 from itertools import repeat
-
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models, transaction
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_save
 from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from satchless.item import ClassifyingPartitioner, ItemLine
+from satchless.item import ClassifyingPartitioner, ItemList
 
 from delivery.models import OutletOrderDetails, TrackingDetails
 from libs.constants import VAT_CHOICES
 from libs.fields import CustomJsonField, SizeRestrictedThumbnailerField
+from libs.models import HashModel
 from libs.utils import get_absolute_media_url
 from outlets.outlet_models import Outlet
 from outlets.stock_models import OutletStock
@@ -117,7 +117,7 @@ class OutletItemLine(models.Model):
         super(OutletItemLine, self).save(force_insert, force_update, using, update_fields)
 
 
-class OutletCart(models.Model, ItemLine):
+class OutletCart(HashModel, ItemList):
     """
     DADDY CART contains unique outlet carts(itemlist)
     represents a set of InfiniaLine or other OutletCart objects that has a total price.
@@ -127,11 +127,16 @@ class OutletCart(models.Model, ItemLine):
         : implement get total()
     """
 
+    def __bool__(self):
+        return hasattr(self, 'pk')
+
+    def __iter__(self):
+        for il in self.itemline.all():
+            yield il
+
     itemline = models.ManyToManyField(OutletItemLine)
     associated_user = models.OneToOneField(OccasionUser, blank=True, null=True, on_delete=models.CASCADE)
     checked_out = models.BooleanField(default=False)
-    hash = models.CharField(_("Hash Value"), max_length=65, blank=True, null=True,
-                            help_text=_("Auto Fill"), unique=True)
 
     def add_itemline(self, itemline):
         """
@@ -177,7 +182,6 @@ class OutletCart(models.Model, ItemLine):
             line = OutletItemLine(stocked_item=line_item, quantity=quantity)
             line.save()
             self.itemline.add(line)
-        return self.itemline
 
     def delete_itemline(self, stock_id):
         line_item = OutletStock.objects.get(id=stock_id)
@@ -228,7 +232,7 @@ class CartSplitter(ClassifyingPartitioner):
         """
         subject with respect to which cart will be split.
 
-        :type itemline: InfiniaItemLine
+        :type itemline: OutletItemLine
         :return:
         """
         return itemline.stocked_item.outlet.id
