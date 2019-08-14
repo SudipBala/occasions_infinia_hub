@@ -24,7 +24,7 @@ SECRET_KEY = 'cfkp1d!u)1mj-nt4#gy!&v$8j@hpe^)h6$!dhm53%)=l@$#d!s'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -157,7 +157,7 @@ STATICFILES_DIRS = [
 SITE_ID = 1
 # SHELL_PLUS = "ipython"
 
-LOGIN_REDIRECT_URL = '/outlets/outlet'
+LOGIN_REDIRECT_URL = '/outlets/'
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
