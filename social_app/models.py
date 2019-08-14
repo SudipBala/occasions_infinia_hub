@@ -13,7 +13,7 @@ from django.apps import apps as django_apps
 from libs.fields import SizeRestrictedThumbnailerField# from libs.utils import get_permissions
 from libs.signals import create_thumbnail
 from libs.db_func import USER_IMAGE_PATH, update_directory_file_path, USER_THUMBNAIL_PATH
-from libs.models import CustomModel
+from libs.models import CustomModel, HashModel
 from libs.validators import PHONE_REGEX
 from libs.constants import ADDRESS_CHOICES, COUNTRY_CHOICES
 from social_app.validators import password_hashed
@@ -53,9 +53,7 @@ class OccasionUserManager(UserManager):
         return self._create_user(email, password, **extra_fields)
 
 
-class ShippingAddress(models.Model):
-    hash = models.CharField(_("Hash Value"), max_length=65, blank=True, null=True,
-                            help_text=_("Auto Fill"), unique=True)
+class ShippingAddress(HashModel):
     country = models.CharField(_("Country"),
                                choices=COUNTRY_CHOICES,
                                max_length=100)
@@ -159,8 +157,8 @@ class OccasionUser(AbstractUser):
     @property
     def has_storerights(self):
         # if has store rights returns the list of stores user has rights to
-        if self.associated_store.count():
-            return self.associated_store.all()
+        if self.associated_outlet.count():
+            return self.associated_outlet.all()
         elif self.is_outletadmin:
             return self.is_outletadmin
 
