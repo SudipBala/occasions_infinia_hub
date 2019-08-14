@@ -1,11 +1,12 @@
 from rest_framework import viewsets
+from rest_framework.generics import ListAPIView
 
 from api.outlets_api.serializers import OutletSerializer, OfferBannerSerializer
 from outlets.models import OfferBannerModel
 from outlets.outlet_models import Outlet
 
 
-class OutletViewSet(viewsets.ModelViewSet):
+class OutletListAPIView(ListAPIView):
     """
     API that allows outlets to be viewed or edited.
     """
@@ -13,7 +14,7 @@ class OutletViewSet(viewsets.ModelViewSet):
     serializer_class = OutletSerializer
 
 
-class BannerImageViewSet(viewsets.ModelViewSet):
+class BannerImageAPIView(ListAPIView):
     """
     API that sends images for banner
     """
