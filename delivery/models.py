@@ -1,13 +1,14 @@
-import datetime
-
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models import signals
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from libs.constants import CURRENCY_CHOICES, STATUS_CHOICES
 from libs.models import CustomModel, CustomManager
-from libs.utils import get_random_secret_key
+from libs.utils import get_random_secret_key, prevent_recursion
 
 
 class TrackingDetailsManager(CustomManager):
@@ -116,6 +117,7 @@ class TrackingDetails(CustomModel):
         #     return self.date_confirmed + \
         #            datetime.timedelta(hours=float(self.order.get_shipping_cost()['delivery_time']))
         return self.date_confirmed
+
     def __unicode__(self):
         return self.tracking_number
 
@@ -206,4 +208,15 @@ class OutletOrderDetails(CustomModel):
             self.order_number = 'O' + get_random_secret_key(10)
         elif self.id and not self.buyer:
             raise AttributeError(_("Empty Cart or Null Buyer..."), code="invalid")
-        super(OutletOrderDetails, self).save(*args, **kwargs)
+        return super(OutletOrderDetails, self).save(*args, **kwargs)
+
+
+@receiver(post_save, sender=TrackingDetails)
+def add_tracking_num(sender, instance, created=True, **kwargs):
+    print("here")
+    instance.tracking_number = 'T' + str(instance.id)
+
+
+# @receiver(post_save, sender=OutletInvoice, dispatch_uid="add_invoice_num")
+# def add_invoice_num(sender, instance, **kwargs):
+#     instance.invoice_number = 'Inv' + str(instance.id)

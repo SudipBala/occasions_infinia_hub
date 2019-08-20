@@ -13,7 +13,7 @@ from delivery.models import OutletOrderDetails, TrackingDetails
 from libs.constants import VAT_CHOICES
 from libs.fields import CustomJsonField, SizeRestrictedThumbnailerField
 from libs.models import HashModel
-from libs.utils import get_absolute_media_url
+from libs.utils import get_absolute_media_url, prevent_recursion
 from outlets.outlet_models import Outlet
 from outlets.stock_models import OutletStock
 from social_app.models import OccasionUser
@@ -391,7 +391,9 @@ class OutletInvoice(models.Model):
             raise ValidationError({"itemline_data": "itemlines dont belong to same outlet."})
 
     def save(self, commit=False, *args, **kwargs):
+        print(self.id)
         if self.id:
+            print(self.itemline_data.values_list('itemline__stocked_item__outlet', flat=True))
             self._clean_itemline_data()
         self.grand_total = self.get_grand_total_with_shipping_and_vat()
         self.shipping_cost = self.get_shipping_cost()
@@ -518,7 +520,6 @@ class CartInvoice(object):
         :return: Invoice or InvoiceDict
         """
         outlet = itemlist[0].stocked_item.outlet
-
         if self.checkout:
             invoice_class = OutletInvoice
         else:
@@ -557,13 +558,14 @@ class CartInvoice(object):
         #
         #     instance.shipping = ShippingAddress.objects.get(id=self.address_id)
         #     instance.add_shipping_cost_to_subtotal()
-
+        # print("herher", itemlist)
         for each_line in itemlist:
             itemline_invoice = self.get_itemline_invoice(each_line)
             instance.itemline_data.add(itemline_invoice)
             instance.subtotal += itemline_invoice.net_price
 
         instance.save(commit=True)
+        print(instance.itemline_data)
         return instance
 
 
@@ -630,3 +632,8 @@ class CartInvoice(object):
             self.cart.save()
 
         return self.daddy_invoice, grand_total_without_vat
+
+
+@receiver(post_save, sender=OutletInvoice, dispatch_uid="add_invoice_num")
+def add_invoice_num(sender, instance, created=True, **kwargs):
+    instance.invoice_number = 'Inv' + str(instance.id)

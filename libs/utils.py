@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 
+from functools import wraps
+
 from django.conf import settings
 from django.utils.crypto import get_random_string
 from easy_thumbnails.files import get_thumbnailer
@@ -21,3 +23,25 @@ def get_random_secret_key(size=6, extra=''):
     """
     chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     return get_random_string(size, chars) + extra
+
+
+def prevent_recursion(func):
+
+    @wraps(func)
+    def no_recursion(sender, instance=None, **kwargs):
+
+        if not instance:
+            return
+
+        if hasattr(instance, '_dirty'):
+            return
+
+        func(sender, instance=instance, **kwargs)
+
+        try:
+            instance._dirty = True
+            instance.save()
+        finally:
+            del instance._dirty
+
+    return no_recursion
