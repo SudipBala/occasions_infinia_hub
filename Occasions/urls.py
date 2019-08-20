@@ -20,7 +20,6 @@ from django.contrib.auth.models import User
 from django.urls import path , include
 from django.contrib.auth import views as auth_view
 
-from api.outlets_api.views import OutletViewSet, BannerImageViewSet
 from delivery.views import SuperAdminListDelivery
 from outlets.stock_views.views import SuperAdminListStock
 from rest_framework import serializers, viewsets, routers
@@ -28,14 +27,14 @@ from rest_framework import serializers, viewsets, routers
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
-router.register('v1/outlet', OutletViewSet)
-router.register('v1/banner', BannerImageViewSet)
+#router.register('v1/banner', BannerImageViewSet)
 
 
 urlpatterns = [
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('api/', include(router.urls)),
+    path('api/', include(('api.stocks_api.urls', 'stocks_api'), namespace='stocks_api')),
+    path('api/', include(('api.outlets_api.urls', 'outlets_api'), namespace='outlets_api')),
     path('admin/', admin.site.urls),
     path('outlets/', include('outlets.urls', namespace="outlets")),
     path('login/', auth_view.LoginView.as_view(), name='login'),
