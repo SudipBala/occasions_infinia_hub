@@ -37,6 +37,7 @@ urlpatterns = [
     path('api/', include(('api.outlets_api.urls', 'outlets_api'), namespace='outlets_api')),
     path('admin/', admin.site.urls),
     path('outlets/', include('outlets.urls', namespace="outlets")),
+    path('category/', include(('outlets.category_views.urls','category'), namespace="category")),
     path('login/', auth_view.LoginView.as_view(), name='login'),
     path('logout/', auth_view.LogoutView.as_view(), name='logout'),
     path('stocks/', SuperAdminListStock.as_view(), name='admin_stock'),

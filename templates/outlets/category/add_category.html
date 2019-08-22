@@ -1,0 +1,15 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+    <form role="form" method="POST" enctype="multipart/form-data">
+        <div class="box-body">
+            {% csrf_token%}
+            {{ form.as_p }}
+        </div>
+
+        <div class="box-footer">
+            <button type="submit" class="btn btn-primary">Submit&raquo;</button>
+        </div>
+    </form>
+{% endblock %}
