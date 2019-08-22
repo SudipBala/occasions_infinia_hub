@@ -213,10 +213,7 @@ class OutletOrderDetails(CustomModel):
 
 @receiver(post_save, sender=TrackingDetails)
 def add_tracking_num(sender, instance, created=True, **kwargs):
-    print("here")
-    instance.tracking_number = 'T' + str(instance.id)
-
-
-# @receiver(post_save, sender=OutletInvoice, dispatch_uid="add_invoice_num")
-# def add_invoice_num(sender, instance, **kwargs):
-#     instance.invoice_number = 'Inv' + str(instance.id)
+    if isinstance(instance, TrackingDetails):
+        if not instance.tracking_number:
+            instance.tracking_number = 'T-' + str(instance.id)
+            instance.save()
