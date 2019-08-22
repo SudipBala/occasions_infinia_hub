@@ -2,6 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from Occasions.settings import LEAFLET_CONFIG
 from libs.mixins import SetOutletInFormMixin
+from outlets.category_models import Category
 from outlets.outlet_models import Outlet
 from outlets.stock_models import OutletStock, OutletItem
 from django.contrib.gis.forms import OSMWidget, PointField, ModelForm as MF
@@ -114,3 +115,9 @@ class OutletsAdminForm(MF):
 
     def clean_image(self):
         return self.cleaned_data['image']
+
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = "__all__"
