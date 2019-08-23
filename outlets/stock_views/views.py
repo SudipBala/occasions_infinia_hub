@@ -9,8 +9,9 @@ from django.views.generic.list import ListView
 from libs.mixins import OutletContextForTemplatesMixin, OutletKwargForFormMixin, OutletPermissionCheckMixin, \
     IsSuperAdminUserMixin
 from outlets.forms import OutletStockAdminForm, OutletItemAdminForm
+from outlets.outlet_models import Outlet
 
-from outlets.stock_models import OutletStock, OutletItem
+from outlets.stock_models import OutletStock, OutletItem, BaseItem
 
 
 class ListStock(OutletPermissionCheckMixin, OutletContextForTemplatesMixin, ListView):
@@ -120,3 +121,13 @@ class SuperAdminListStock(IsSuperAdminUserMixin, ListView):
         context = super(SuperAdminListStock, self).get_context_data()
         return context
 
+
+def search_items(request, outlet_id):
+    query = request.GET.get('query').strip()
+    q = BaseItem.objects.filter(display_name__icontains=query)
+    q = [{'id': each.id, 'name': str(each)} for each in q]
+    return JsonResponse(
+        dict(
+            items=q,
+        )
+    )

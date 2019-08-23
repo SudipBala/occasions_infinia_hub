@@ -5,7 +5,7 @@ from libs.mixins import SetOutletInFormMixin
 from outlets.category_models import Category
 from outlets.outlet_models import Outlet
 from outlets.stock_models import OutletStock, OutletItem
-from django.contrib.gis.forms import OSMWidget, PointField, ModelForm as MF
+from django.contrib.gis.forms import OSMWidget, PointField, ModelForm
 
 
 class OutletForm(forms.ModelForm):
@@ -83,7 +83,7 @@ class OutletStockAdminForm(forms.ModelForm):
             self.initial['sku'] = self.instance.sku[:-1]
         else:
             if not kwargs.get('data'):  # get form else is post form
-                self.fields['item'].queryset = self.fields['item'].queryset.all()
+                self.fields['item'].queryset = self.fields['item'].queryset.none()
 
     def save(self, commit=True):
         self.instance = super(OutletStockAdminForm, self).save(commit=False)
@@ -96,7 +96,7 @@ class OutletStockAdminForm(forms.ModelForm):
         return super(OutletStockAdminForm, self).save()
 
 
-class OutletsAdminForm(MF):
+class OutletsAdminForm(forms.ModelForm):
     class Meta:
         model = Outlet
         fields = ['display_name', 'opening_hours', 'closing_hours', 'country', 'city', 'street',
