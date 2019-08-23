@@ -64,6 +64,9 @@ class OutletDelete(IsSuperAdminUserMixin, DeleteView):
     model = Outlet
     queryset = Outlet.objects.all()
 
+    def get(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
+
     def get_success_url(self):
         messages.success(self.request, "{message}".format(
             message="The outlet has been deleted"
