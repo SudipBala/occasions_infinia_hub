@@ -28,26 +28,60 @@
                         <table id="example2" class="table table-bordered table-hover">
                             <thead>
                             <tr>
-                                <th>Category Name</th>
+                                <th>Active Category Name</th>
                             </tr>
                             </thead>
                             <tbody>
-                            {% for item in object_list %}
+                            {% if category_status %}
+                            {% for item in object_list.active %}
                                 <tr>
                                     <td>
                                         <a href="{% url 'category:sub-category' pk=item.pk %}">
                                             {{ item.category_name }}
                                         </a>
-                                        <a href="{% url 'category:edit' pk=item.id %}">
-                                            <button type="button">Edit</button>
+                                        <a href ="{% url 'category:edit' pk=item.id %}" >
+                                            <i class="fa fa-edit" style="margin-left: 50px;"></i>
                                         </a>
+{#                                        <a href="{% url 'category:delete' pk=item.id %}">#}
+{#                                            <i class="btn-danger fa fa-trash" style="margin-left: 50px;"></i>#}
+{#                                        </a>#}
                                     </td>
 
                                 </tr>
                             {% endfor %}
+                            {% endif %}
                             </tbody>
 
                         </table>
+                    <table id="example2" class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <th>InActive Category Name</th>
+                            </tr>
+                            </thead>
+                             <tbody>
+                        {% if category_status.inactive %}
+                            {% for item in object_list.inactive %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'category:sub-category' pk=item.pk %}">
+                                            {{ item.category_name }}
+                                        </a>
+                                        <a href ="{% url 'category:edit' pk=item.id %}" >
+                                            <i class="fa fa-edit" style="margin-left: 50px;"></i>
+                                        </a>
+{#                                        <a href="{% url 'category:delete' pk=item.id %}">#}
+{#                                            <i class="btn-danger fa fa-trash" style="margin-left: 50px;"></i>#}
+{#                                        </a>#}
+                                    </td>
+
+                                </tr>
+                            {% endfor %}
+                            {% endif %}
+                        </tbody>
+
+                        </table>
+
                     </div>
                     <!-- /.box-body -->
                 </div>
