@@ -4,6 +4,7 @@ from django.conf import settings
 
 STOCK_IMAGE_PATH = 'stocks/'
 OUTLET_IMAGE_PATH = 'outlets/'
+CATEGORY_IMAGE_PATH = 'category/'
 
 THUMBNAIL_PATH = 'thumbnails/'
 

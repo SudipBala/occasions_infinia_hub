@@ -54,11 +54,8 @@ class BaseItem(CustomModel):
     thumbnail = models.ImageField(_("thumbnail"), upload_to="photos/thumbnails/",
                                   default='NA.png.120x120_q85_crop.jpg', blank=True)
 
-    def __unicode__(self):
-        return OutletItem.objects.get(id=self.id).__unicode__()
-
     def __str__(self):
-        return self.display_name
+        return OutletItem.objects.get(id=self.id).__str__()
 
 
 class OutletItem(BaseItem):
