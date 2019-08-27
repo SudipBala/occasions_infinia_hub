@@ -88,3 +88,5 @@ TICKET_CHOICES = (
     (0.0, _("Open")),
     (1.0, _("Closed"))
 )
+
+SESSION_ID_PARAM= "cart_hash"

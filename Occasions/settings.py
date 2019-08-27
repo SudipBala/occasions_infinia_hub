@@ -100,7 +100,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'occasion',
-        'USER': 'infinia_occasion',
+        'USER': 'infiniaoccasion',
         'PASSWORD': 'adminadminadmin',
         'HOST': 'localhost',
         'PORT': '5432',

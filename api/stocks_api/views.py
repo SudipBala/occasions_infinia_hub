@@ -17,6 +17,7 @@ class OutletStockAPIView(ListAPIView):
     serializer_class = StocksListSerializer
 
     def get_queryset(self):
-        outlet_id = self.kwargs['outlet_id']
+        outlet_id = self.kwargs['outlet_id']  #use <outlet_id> passed in url
         return OutletStock.objects.filter(outlet=outlet_id)
+
 

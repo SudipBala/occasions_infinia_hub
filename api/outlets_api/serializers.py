@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from rest_framework.serializers import CharField , EmailField
+from rest_framework.serializers import CharField, EmailField
 from rest_framework.validators import UniqueValidator
 
 from outlets.models import OfferBannerModel
@@ -21,4 +21,5 @@ class OutletSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['display_name', 'opening_hours', 'closing_hours', 'country', 'city', 'street',
                   'longitude', 'latitude', 'location', 'time_zone', 'delivery_area', 'contact',
                   'slug', 'email', 'connected_email', 'image']
+
 

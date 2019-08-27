@@ -78,7 +78,7 @@ class OutletItemLine(models.Model):
         quantity = kwargs.get('quantity', 1)
         self.quantity += quantity
         self.save()
-
+        
     def get_total(self):
         return self.get_quantity() * self.stocked_item.price
 
@@ -189,7 +189,6 @@ class OutletCart(HashModel, ItemList):
         itemline_instance = self.itemline.get(stocked_item=line_item)
         itemline_instance.delete()
         return name
-
     def delete_all_itemlines(self):
         self.itemline.all().delete()
 
@@ -628,4 +627,4 @@ class CartInvoice(object):
             self.cart.checked_out = True
             self.cart.save()
 
-        return self.daddy_invoice, grand_total_without_vat
+        return self.daddy_invoice, grand_total_without_vat #self.shipped_to

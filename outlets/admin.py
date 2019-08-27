@@ -4,6 +4,8 @@ from django.contrib import admin
 
 from outlets.outlet_models import Outlet
 from outlets.stock_models import Category, OutletItem, OutletStock
+from outlets.models import OfferBannerModel
+
 
 
 class OutletAdmin(LeafletGeoAdmin):
@@ -20,4 +22,5 @@ admin.site.register(OutletItemLine)
 admin.site.register(OutletCart)
 admin.site.register(ItemLineInvoice)
 admin.site.register(OutletInvoice)
+admin.site.register(OfferBannerModel)
 
