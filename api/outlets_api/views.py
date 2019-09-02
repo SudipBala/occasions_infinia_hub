@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.permissions import IsAuthenticated
 
 from api.outlets_api.serializers import OfferBannerSerializer, OutletDetailSerializer, OutletSerializer
 from outlets.models import OfferBannerModel
@@ -10,6 +11,7 @@ class OutletListAPIView(ListAPIView):
     """
     API that allows outlets to be viewed only.
     """
+    permission_classes = (IsAuthenticated, )
     queryset = Outlet.objects.all()
     serializer_class = OutletSerializer
 
