@@ -1,13 +1,20 @@
 from rest_framework import serializers
-from outlets.models import OutletCart
 
-class OutletCartSerializer(serializers.ModelSerializer):
+from api.stocks_api.serializers import StocksDetailSerializer
+from outlets.models import OutletCart, OutletItemLine
+
+
+class ItemLineSerializer(serializers.ModelSerializer):
+    stocked_item = StocksDetailSerializer()
 
     class Meta:
-        model= OutletCart
-        fields=[
-            'id',
-            'itemline',
-            'associated_user',
-            'checked_out'
-        ]
+        model = OutletItemLine
+        fields = '__all__'
+
+
+class OutletCartSerializer(serializers.ModelSerializer):
+    itemline = ItemLineSerializer(many=True)
+
+    class Meta:
+        model = OutletCart
+        fields = "__all__"
