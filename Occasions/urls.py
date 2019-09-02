@@ -19,6 +19,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.urls import path , include
 from django.contrib.auth import views as auth_view
+from rest_framework_simplejwt import views as jwt_views
 
 from delivery.views import SuperAdminListDelivery
 from outlets.stock_views.views import SuperAdminListStock
@@ -49,6 +50,8 @@ urlpatterns = [
     path('api/auth/', include('rest_framework.urls')),
     path('oauth2/', include('oauth2_provider.urls', namespace='oauth2')),
     path('activity/', include(('actstream.urls', 'actstream'), namespace="activity")),
+    path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 ] +\
               static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
               static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
