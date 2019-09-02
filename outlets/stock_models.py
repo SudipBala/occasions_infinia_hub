@@ -60,14 +60,15 @@ class BaseItem(CustomModel):
 
 class OutletItem(BaseItem):
     type1 = models.ForeignKey(Category, verbose_name=_("Category"), related_name="first", on_delete=models.CASCADE)
-    type2 = models.ForeignKey(Category, verbose_name=_("Sub-Category"), related_name="second", on_delete=models.CASCADE)
+    type2 = models.ForeignKey(Category, verbose_name=_("Sub-Category"), related_name="second", on_delete=models.CASCADE,
+                              blank=True, null=True)
 
     def __str__(self):
         return "%s (%s %s) in %s > %s" % (self.display_name, self.quantity, self.unit, self.type1.get_display_name(),
-                                          self.type2.get_display_name())
+                                          self.type2.get_display_name() if self.type2 else " ")
 
-    def get_display_name(self):
-        return "{} in {} - {}".format(self.display_name, self.type2.get_display_name(), self.type1.get_display_name())
+    # def get_display_name(self):
+        # return "{} in {} - {}".format(self.display_name, self.type2.get_display_name(), self.type1.get_display_name())
 
 
 class OutletStock(CustomModel):
@@ -87,7 +88,7 @@ class OutletStock(CustomModel):
                                     help_text=_("'35' items available in infinia stock"),
                                     validators=[
                                         MinValueValidator(0, message=_("Minimum value should be zero."), )
-                                    ])
+                        ])
     minimum_quantity = models.IntegerField(_("Minimum to be in cart"), default=0, blank=True,
                                            validators=[
                                                MinValueValidator(0, "Minimum value can only be zero")

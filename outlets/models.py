@@ -144,6 +144,7 @@ class OutletCart(HashModel, ItemList):
         :param itemline: OutletItemLine
         :return:
         """
+        #checks if itemline is in OutletItemLine
         assert isinstance(itemline, OutletItemLine)
         try:
             existing_itemline = self.itemline.get(stocked_item=itemline.stocked_item)
