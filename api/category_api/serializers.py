@@ -1,17 +1,37 @@
 from rest_framework import serializers
 
 from outlets.category_models import Category
-from outlets.stock_models import BaseItem, OutletItem, OutletStock
-# from outlets.stock_models import PriceModifiers
+# from api.stocks_api.serializers import ItemSerializer
+from outlets.stock_models import OutletItem, BaseItem
 
 """
 serailizers for stock_models and category_models
 """
-class CategorySerializer(serializers.ModelSerializer):
+
+
+class CategoryListSerializer(serializers.ModelSerializer):
     """ read only serializer """
     class Meta:
         model = Category
-        fields = ['id', 'level', 'category_name', 'parent']
+        fields = ['id', 'level', 'category_name', 'parent', 'image', 'disabled']
+
+
+class CategoryDetailItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BaseItem
+        fields = ['display_name', 'quantity', 'image']
+
+
+class ItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=BaseItem
+        fields='__all__'
+
+
+
+
+
+
 
 
 
