@@ -347,7 +347,8 @@ class OutletInvoice(models.Model):
     @property
     def vat(self):
         # vat choices for uae/india
-        return 0
+        country = (self.associated_outlet.country)
+        return VAT_CHOICES.get(country)
 
     @property
     def total(self):
