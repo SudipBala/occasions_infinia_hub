@@ -19,7 +19,7 @@ class CategoryListSerializer(serializers.ModelSerializer):
 class CategoryDetailItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseItem
-        fields = ['display_name', 'quantity', 'image']
+        fields = ['id', 'display_name', 'quantity', 'image']
 
 
 class ItemSerializer(serializers.ModelSerializer):
