@@ -18,7 +18,7 @@ class StocksListSerializer(ModelSerializer):
 
     class Meta:
         model = OutletStock
-        fields = [
+        fields = ['id',
             'item',
             'price',
             'currency'
