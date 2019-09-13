@@ -5,20 +5,15 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from api.outlets_api.serializers import OfferBannerSerializer, OutletDetailSerializer, OutletSerializer
+from api.stocks_api.serializers import StocksListSerializer, StocksDetailSerializer
 from outlets.models import OfferBannerModel
 from outlets.outlet_models import Outlet
+from outlets.stock_models import OutletStock
 
 
-# class OutletListAPIView(ListAPIView):
-#     """
-#     API that allows outlets to be viewed only.
-#     """
-#     permission_classes = (IsAuthenticated, )
-#     queryset = Outlet.objects.all()
-#     serializer_class = OutletSerializer
 class OutletListAPIView(ListAPIView):
 
-    # permission_classes = (IsAuthenticated, )
+    #     permission_classes = (IsAuthenticated, )
 
     def get(self, request, *args, **kwargs):
         outlets = Outlet.objects.all()
@@ -52,4 +47,13 @@ class OutletDetailAPIView(RetrieveAPIView):
             return Response({"message": "Outlet Not found", "status":status.HTTP_404_NOT_FOUND})
 
 
+class OutletStockAPIView(ListAPIView):
 
+    def get(self, request, *args, **kwargs):
+        outlet_id = self.kwargs['outlet_id']
+        outlet_stock = OutletStock.objects.filter(outlet=outlet_id)
+        if outlet_stock:
+            serializer = StocksListSerializer(outlet_stock, many=True)
+            return Response({"message": "Outlet Stock Details", "status": status.HTTP_200_OK, "data": serializer.data})
+        else:
+            return Response({"message": "Outlet Stock Not Found", "status": status.HTTP_404_NOT_FOUND})
