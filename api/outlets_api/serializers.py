@@ -6,24 +6,22 @@ from outlets.models import OfferBannerModel
 from outlets.outlet_models import Outlet
 
 
-class OfferBannerSerializer(serializers.HyperlinkedModelSerializer):
+class OfferBannerSerializer(serializers.ModelSerializer):
     class Meta:
         model = OfferBannerModel
         fields = ['banner_image', 'offer_message', 'offer_discount']
 
 
-class OutletDetailSerializer(serializers.HyperlinkedModelSerializer):
+class OutletDetailSerializer(serializers.ModelSerializer):
     display_name = CharField()
     email = EmailField(validators=[UniqueValidator(queryset=Outlet.objects.all())])
 
     class Meta:
         model = Outlet
-        fields = ['display_name', 'opening_hours', 'closing_hours', 'country', 'city', 'street',
-                  'longitude', 'latitude', 'location', 'time_zone', 'delivery_area', 'contact',
-                  'slug', 'email', 'connected_email', 'image']
+        fields = "__all__"
 
 
 class OutletSerializer(ModelSerializer):
     class Meta:
         model = Outlet
-        fields = ['display_name', 'city', 'street']
+        fields = "__all__"
