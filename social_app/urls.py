@@ -1,5 +1,11 @@
-from django.conf.urls import url, include
+
+from django.urls import path
+
+
+from social_app.views import RegistrationAPIView
+
+app_name = 'users'
 
 urlpatterns = [
-    # url(r'^', include('social_app.Occasionuser_views.urls', namespace='user'))
+    path('register/', RegistrationAPIView.as_view()),
 ]
