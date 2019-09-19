@@ -1,6 +1,9 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 
+from datetime import datetime, timedelta
+
+import jwt
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import AbstractUser, PermissionsMixin, UserManager, Group
 from django.core.exceptions import ObjectDoesNotExist
@@ -9,8 +12,10 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 from django.apps import apps as django_apps
+from rest_framework_jwt.settings import api_settings
 
-from libs.fields import SizeRestrictedThumbnailerField# from libs.utils import get_permissions
+from Occasions import settings
+from libs.fields import SizeRestrictedThumbnailerField  # from libs.utils import get_permissions
 from libs.signals import create_thumbnail
 from libs.db_func import USER_IMAGE_PATH, update_directory_file_path, USER_THUMBNAIL_PATH
 from libs.models import CustomModel, HashModel
@@ -135,6 +140,32 @@ class OccasionUser(AbstractUser):
     USERNAME_FIELD = 'email'
 
     REQUIRED_FIELDS = []
+
+    @property
+    def token(self):
+        """
+                Allows us to get a user's token by calling `user.token` instead of
+                `user.generate_jwt_token().
+
+                The `@property` decorator above makes this possible. `token` is called
+                a "dynamic property".
+                """
+        return self._generate_jwt_token()
+
+    def _generate_jwt_token(self):
+        """
+        Generates a JSON Web Token that stores this user's ID and has an expiry
+        date set to 6 days into the future.
+        """
+
+        dt = datetime.now() + timedelta(days=6)
+
+        token = jwt.encode({
+            'id': self.pk,
+            'exp': int(dt.strftime('%s'))
+        }, settings.SECRET_KEY, algorithm='HS256')
+
+        return token.decode('utf-8')
 
     class Meta:
         verbose_name = _('user')

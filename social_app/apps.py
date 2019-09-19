@@ -14,9 +14,9 @@ class SocialAppConfig(AppConfig):
         from oauth2_provider.models import Application
         try:
             if True:
-                user = OccasionUser.objects.filter(email="pujanthapa88.63@gmail.com")
+                user = OccasionUser.objects.filter(email="sudipbala01@gmail.com")
                 if not user:
-                    user = OccasionUser(email="pujanthapa88.63@gmail.com", username="not_empty")
+                    user = OccasionUser(email="sudipbala01@gmail.com", username="sudip")
                     user.set_password("12345")
                     user.is_staff = True
                     user.save()
