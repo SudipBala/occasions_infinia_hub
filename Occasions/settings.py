@@ -38,7 +38,6 @@ CORE_APPS = [
     'django.contrib.sites',
     'django.contrib.postgres',
     'django.contrib.gis',
-    'social_app'
 ]
 
 THIRD_PARTY_APPS = [
@@ -47,16 +46,19 @@ THIRD_PARTY_APPS = [
     'easy_thumbnails',
     'leaflet',
     'django_filters',
+    'rest_auth',
     'rest_framework',
-    'corsheaders',
-    'oauth2_provider',
+    'rest_auth.registration',
     'rest_framework_social_oauth2',
     'actstream',
+    'oauth2_provider',
+    'corsheaders',
 ]
 
 LOCAL_APPS = [
     'outlets',
-    'delivery'
+    'delivery',
+    'social_app',
 ]
 
 INSTALLED_APPS = CORE_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -157,15 +159,6 @@ STATICFILES_DIRS = [
 SITE_ID = 1
 # SHELL_PLUS = "ipython"
 
-LOGIN_REDIRECT_URL = '/outlets/'
-
-REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 5,
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ],
-}
 
 LEAFLET_CONFIG = {
     'map_height': '500px',
@@ -179,7 +172,6 @@ LEAFLET_CONFIG = {
     'display_raw': 'true',
     'map_srid': 4326
 }
-
 
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -205,6 +197,34 @@ ACTSTREAM_SETTINGS = {
 }
 AUTH_USER_MODEL = 'social_app.OccasionUser'
 
-SITE_ID = 1
 SITE_URL = "0.0.0.0:8000"
 SITE_NAME = "Occasions"
+
+REST_FRAMEWORK = {
+    # 'DEFAULT_PERMISSION_CLASSES': (
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5,
+    # 'DEFAULT_AUTHENTICATION_CLASSES': [
+    #     'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    #],
+}
+
+#
+# JWT_AUTH = {
+#     'JWT_ALLOW_REFRESH': True,
+#     'JWT_EXPIRATION_DELTA': timedelta(hours=1),
+#     'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=7),
+# }
+
+
+# REST_USE_JWT = True
+
+# LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = '/outlets/'
+
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# ACCOUNT_EMAIL_REQUIRED = False
+# ACCOUNT_AUTHENTICATION_METHOD = 'username'
+# ACCOUNT_EMAIL_VERIFICATION = 'optional'
